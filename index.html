@@ -1,1 +1,142 @@
 
+```html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f172a">
+    <title>Taxi Man - إدارة سيارات الأجرة</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f1f5f9; height: 100vh; display: flex; flex-direction: column; color: #1e293b; }
+        .header { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(15, 23, 42, 0.3); }
+        .header h1 { font-size: 1.3rem; font-weight: 800; }
+        .user-info { font-size: 0.8rem; opacity: 0.95; text-align: left; display: flex; gap: 12px; align-items: center; }
+        .logout-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 4px 10px; border-radius: 30px; font-size: 0.7rem; cursor: pointer; }
+        .content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 130px; }
+        .page { display: none; }
+        .page.active { display: block; }
+        /* أنماط أخرى محسنة */
+        .login-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; padding: 20px; }
+        .login-logo { font-size: 4rem; margin-bottom: 10px; }
+        .login-title { font-size: 1.8rem; color: #0f172a; font-weight: 800; margin-bottom: 5px; }
+        .login-subtitle { color: #64748b; font-size: 0.9rem; margin-bottom: 20px; }
+        .login-card { background: white; border-radius: 28px; padding: 30px 24px; width: 100%; max-width: 400px; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2); }
+        .login-toggle { display: flex; background: #f1f5f9; border-radius: 40px; padding: 4px; margin-bottom: 20px; }
+        .login-toggle button { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 30px; font-weight: 700; font-size: 0.9rem; cursor: pointer; color: #64748b; }
+        .login-toggle button.active { background: white; color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .input-group { margin-bottom: 14px; }
+        .input-group label { display: block; color: #334155; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px; }
+        .input-group input, .input-group select { width: 100%; padding: 12px 14px; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 0.95rem; background: #f8fafc; }
+        .input-group input:focus { border-color: #f59e0b; outline: none; box-shadow: 0 0 0 3px rgba(245,158,11,0.1); }
+        .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; border-radius: 40px; color: white; font-weight: 800; font-size: 1rem; cursor: pointer; box-shadow: 0 6px 14px rgba(245,158,11,0.3); transition: 0.2s; }
+        .btn-primary:active { transform: scale(0.97); }
+        .btn-green { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        .btn-red { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; box-shadow: none; }
+        .btn-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .card { background: white; border-radius: 24px; padding: 18px; margin-bottom: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.04); border: 1px solid #eef2ff; }
+        .card-title { font-size: 1.2rem; font-weight: 800; color: #0f172a; border-right: 4px solid #f59e0b; padding-right: 12px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .car-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .car-card { background: white; border-radius: 20px; padding: 12px; text-align: center; border: 2px solid #e2e8f0; cursor: pointer; transition: 0.1s; }
+        .car-card.selected { border-color: #f59e0b; background: #fffbeb; }
+        .car-card .car-type-icon { font-size: 2rem; }
+        .car-name { font-weight: 800; font-size: 0.9rem; }
+        .car-auth { font-size: 0.7rem; color: #475569; }
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-card { background: white; border-radius: 20px; padding: 12px; text-align: center; }
+        .stat-card h3 { font-size: 1.5rem; font-weight: 800; }
+        .tabs { display: flex; background: white; box-shadow: 0 -6px 25px rgba(0,0,0,0.1); padding: 8px 0 12px; border-top: 1px solid #e2e8f0; position: fixed; bottom: 55px; left: 0; right: 0; z-index: 100; justify-content: space-around; }
+        .tab { flex: 1; text-align: center; background: none; border: none; font-size: 0.7rem; font-weight: 700; color: #94a3b8; padding: 6px 0; cursor: pointer; border-radius: 30px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .tab.active { color: #f59e0b; background: #fffbeb; }
+        .tab-icon { font-size: 1.6rem; }
+        .ad-banner-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 6px; text-align: center; font-size: 0.7rem; color: #475569; z-index: 99; min-height: 48px; display: flex; align-items: center; justify-content: center; }
+        .toast { position: fixed; bottom: 130px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 12px 24px; border-radius: 40px; font-size: 0.8rem; opacity: 0; transition: 0.2s; z-index: 1200; }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .doc-card { border-right: 5px solid; padding: 12px; margin-bottom: 10px; border-radius: 16px; background: white; }
+        .doc-card.valid { border-color: #10b981; }
+        .doc-card.warning { border-color: #f59e0b; background: #fffbeb; }
+        .doc-card.danger { border-color: #ef4444; background: #fef2f2; }
+        .row-flex { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; }
+        .badge { padding: 2px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 700; }
+        .driver-card { border-right: 4px solid #3b82f6; margin-bottom: 12px; background: white; border-radius: 20px; padding: 12px; }
+        .km-calc { background: #f0f9ff; border-radius: 16px; padding: 12px; margin-bottom: 12px; }
+        @media print { .tabs, .ad-banner-bottom, .admob-banner, .btn-* { display: none; } }
+    </style>
+</head>
+<body>
+<div id="app">
+    <!-- تسجيل الدخول -->
+    <div id="page-login" class="page active">
+        <div class="login-container">
+            <div class="login-logo">🚕💨</div>
+            <div class="login-title">Taxi Man</div>
+            <div class="login-subtitle">نظام إدارة سيارات الأجرة الذكي</div>
+            <div class="login-card">
+                <div class="login-toggle">
+                    <button id="btn-login-tab" class="active" onclick="toggleAuth('login')">تسجيل الدخول</button>
+                    <button id="btn-register-tab" onclick="toggleAuth('register')">حساب جديد</button>
+                </div>
+                <div id="login-form">
+                    <div class="input-group"><label>📧 البريد الإلكتروني</label><input type="email" id="login-email" placeholder="admin@taxi.com"></div>
+                    <div class="input-group"><label>🔒 كلمة المرور</label><input type="password" id="login-password" placeholder="••••••••"></div>
+                    <button class="btn-primary" onclick="login()">🔐 دخول</button>
+                    <button class="btn-red" onclick="createTestAccount()" style="margin-top:12px; background:#e0f2fe; color:#0369a1;">🚀 تجربة التطبيق (حساب تجريبي)</button>
+                </div>
+                <div id="register-form" style="display:none;">
+                    <div class="input-group"><label>👤 الاسم الكامل</label><input type="text" id="reg-name" placeholder="أحمد محمد"></div>
+                    <div class="input-group"><label>📧 البريد الإلكتروني</label><input type="email" id="reg-email" placeholder="example@taxi.com"></div>
+                    <div class="input-group"><label>🔒 كلمة المرور</label><input type="password" id="reg-password" placeholder="********"></div>
+                    <div class="input-group"><label>🔒 تأكيد كلمة المرور</label><input type="password" id="reg-confirm" placeholder="********"></div>
+                    <button class="btn-primary" onclick="register()">✅ إنشاء حساب</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- الرئيسية -->
+    <div id="page-main" class="page">
+        <div class="header">
+            <h1>🚕 Taxi Man</h1>
+            <div class="user-info"><span id="user-name">مرحباً</span><button class="logout-btn" onclick="logout()">خروج</button></div>
+        </div>
+        <div class="content" id="mainContent">
+            <!-- الأقسام -->
+            <div id="tab-cars" class="tab-content active">
+                <div class="admob-banner" style="background:#eef2ff; border-radius:16px; padding:8px; margin-bottom:12px; text-align:center; font-size:0.7rem;"><span>📢 AdMob Banner (ca-app-pub-7652843414407661~8783268338)</span></div>
+                <div class="card"><div class="card-title">🚗 سيارتي</div><div id="cars-list" class="car-grid"></div><button class="btn-primary btn-green" onclick="showAddCar()">➕ سيارة جديدة</button></div>
+                <div id="add-car-form" class="card" style="display:none;"><div class="card-title">➕ تفاصيل السيارة</div><div class="input-group"><label>اسم السيارة</label><input id="car-name" placeholder="مثال: تويوتا"></div><div class="input-group"><label>رقم المأذونية</label><input id="car-auth" placeholder="A1234"></div><div class="input-group"><label>تاريخ انتهاء المأذونية</label><input type="date" id="car-license-expiry"></div><div class="input-group"><label>النوع</label><select id="car-type"><option value="small">🚕 صغير (2.5 درهم/كم)</option><option value="big">🚐 كبير (3 درهم/كم)</option></select></div><div class="input-group"><label>الكيلومتر الابتدائي</label><input type="number" id="car-km" value="0"></div><button class="btn-primary" onclick="addCar()">💾 حفظ</button><button class="btn-red" onclick="hideAddCar()">إلغاء</button></div>
+            </div>
+            <div id="tab-drivers" class="tab-content" style="display:none;"><div class="admob-banner" style="background:#eef2ff; border-radius:16px; padding:8px; margin-bottom:12px; text-align:center;">📢 AdMob Banner</div><div class="card"><div class="card-title">👤 السائقين</div><div id="drivers-list"></div><button class="btn-primary btn-green" onclick="showAddDriver()">➕ سائق جديد</button></div><div id="add-driver-form" class="card" style="display:none;"><div class="card-title">سائق جديد</div><div class="input-group"><label>الاسم الكامل</label><input id="driver-name"></div><div class="input-group"><label>الهاتف</label><input id="driver-phone"></div><div class="input-group"><label>رقم البطاقة CIN</label><input id="driver-cin"></div><div class="input-group"><label>رخصة السياقة</label><input id="driver-license"></div><div class="input-group"><label>انتهاء الرخصة</label><input type="date" id="driver-license-expiry"></div><div class="input-group"><label>ملاحظات</label><input id="driver-notes"></div><button class="btn-primary" onclick="addDriver()">تسجيل</button><button class="btn-red" onclick="hideAddDriver()">إلغاء</button></div></div>
+            <div id="tab-income" class="tab-content" style="display:none;"><div class="admob-banner" style="background:#eef2ff; border-radius:16px; padding:8px; margin-bottom:12px;">📢 AdMob Banner</div><div class="card"><div class="card-title">💰 إيراد يومي</div><div class="input-group"><label>🚖 السيارة</label><select id="income-car-id"></select></div><div class="input-group"><label>👨‍✈️ السائق</label><select id="income-driver-id"><option value="">بدون سائق</option></select></div><div class="input-group"><label>📅 التاريخ</label><input type="date" id="income-date"></div><div class="km-calc" id="km-info-block"><span>📊 سيتم حساب الفرق بناءً على آخر كيلومتر</span></div><div class="input-group"><label>الكيلومتر الحالي</label><input type="number" id="current-km" placeholder="آخر قراءة"></div><div class="input-group"><label>مبلغ الصندوق الإضافي (درهم)</label><input type="number" id="extra-money" value="0"></div><div class="input-group"><label>أو إجمالي المبلغ (درهم)</label><input type="number" id="total-manual" placeholder="اتركه فارغاً للحساب التلقائي"></div><button class="btn-primary" onclick="addIncome()">تسجيل الإيراد</button></div><div class="card"><div class="card-title">📋 آخر الإيرادات</div><div id="incomes-list"></div></div></div>
+            <div id="tab-expense" class="tab-content" style="display:none;"><div class="admob-banner" style="background:#eef2ff; border-radius:16px; padding:8px; margin-bottom:12px;">📢 AdMob Banner</div><div class="card"><div class="card-title">💸 مصروف جديد</div><div class="input-group"><label>السيارة</label><select id="expense-car-id"></select></div><div class="input-group"><label>التاريخ</label><input type="date" id="expense-date"></div><div class="input-group"><label>الفئة</label><select id="expense-cat"><option value="بنزين">⛽ بنزين</option><option value="صيانة">🔧 صيانة</option><option value="غرامة">📜 غرامة</option><option value="إصلاح">🛠️ إصلاح</option><option value="أخرى">📌 أخرى</option></select></div><div class="input-group"><label>المبلغ (درهم)</label><input type="number" id="expense-amount"></div><div class="input-group"><label>ملاحظات</label><input id="expense-note"></div><button class="btn-primary" onclick="addExpense()">إضافة مصروف</button></div><div id="expenses-list"></div></div>
+            <div id="tab-reports" class="tab-content" style="display:none;"><div class="card"><div class="card-title">📊 التقارير المالية</div><div class="input-group"><label>اختر السيارة</label><select id="report-car-select"></select></div><div class="input-group"><label>الشهر</label><input type="month" id="report-month"></div><button class="btn-primary" onclick="generateReport()">عرض التقرير</button><div id="report-result"></div><button class="btn-primary btn-blue" onclick="window.print()">🖨️ طباعة التقرير</button></div></div>
+            <div id="tab-documents" class="tab-content" style="display:none;"><div class="card"><div class="card-title">⚠️ تنبيهات المستندات</div><div id="docs-alerts"></div></div></div>
+        </div>
+        <div class="tabs">
+            <button class="tab" onclick="switchTab('cars')"><span class="tab-icon">🚗</span><span>سيارات</span></button>
+            <button class="tab" onclick="switchTab('drivers')"><span class="tab-icon">👤</span><span>سائقين</span></button>
+            <button class="tab" onclick="switchTab('income')"><span class="tab-icon">💰</span><span>إيرادات</span></button>
+            <button class="tab" onclick="switchTab('expense')"><span class="tab-icon">💸</span><span>مصروفات</span></button>
+            <button class="tab" onclick="switchTab('reports')"><span class="tab-icon">📈</span><span>تقارير</span></button>
+            <button class="tab" onclick="switchTab('documents')"><span class="tab-icon">📄</span><span>مستندات</span></button>
+        </div>
+        <div class="ad-banner-bottom">⚡ إعلانات AdMob - معرف التطبيق: ca-app-pub-7652843414407661~8783268338</div>
+        <div id="toastMsg" class="toast"></div>
+    </div>
+</div>
+
+<script>
+    let currentUser = null;
+    let appData = { users: [], cars: [], drivers: [], incomes: [], expenses: [] };
+    function saveDataToLocal() { if(currentUser) localStorage.setItem(`taxi_${currentUser.email}`, JSON.stringify({ cars: appData.cars, drivers: appData.drivers, incomes: appData.incomes, expenses: appData.expenses })); }
+    function loadUserData() { if(!currentUser) return; let raw = localStorage.getItem(`taxi_${currentUser.email}`); if(raw) { let data=JSON.parse(raw); appData.cars=data.cars||[]; appData.drivers=data.drivers||[]; appData.incomes=data.incomes||[]; appData.expenses=data.expenses||[]; } else { appData.cars=[]; appData.drivers=[]; appData.incomes=[]; appData.expenses=[]; } }
+    function showToast(msg, duration=2000) { let t=document.getElementById('toastMsg'); t.innerText=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), duration); }
+    function toggleAuth(type) { document.getElementById('login-form').style.display = type==='login'?'block':'none'; document.getElementById('register-form').style.display = type==='register'?'block':'none'; document.querySelectorAll('.login-toggle button').forEach(btn=>btn.classList.remove('active')); if(type==='login') document.getElementById('btn-login-tab').classList.add('active'); else document.getElementById('btn-register-tab').classList.add('active'); }
+    function login() { let email=document.getElementById('login-email').value.trim(); let pwd=document.getElementById('login-password').value; let users=JSON.parse(localStorage.getItem('taxi_users')||'[]'); let user=users.find(u=>u.email===email && u.password===pwd); if(user) { currentUser=user; localStorage.setItem('taxi_current', JSON.stringify(user)); loadUserData(); renderMainApp(); showToast(`مرحباً ${user.name}`); } else showToast('بيانات دخول خاطئة'); }
+    function register() { let name=document.getElementById('reg-name').value; let email=document.getElementById('reg-email').value.trim(); let pwd=document.getElementById('reg-password').value; let confirm=document.getElementById('reg-confirm').value; if(!name||!email||!pwd) return showToast('املأ جميع الحقول'); if(pwd!==confirm) return showToast('كلمة المرور غير متطابقة'); let users=JSON.parse(localStorage.getItem('taxi_users')||'[]'); if(users.find(u=>u.email===email)) return showToast('البريد موجود مسبقاً'); users.push({name, email, password:pwd}); localStorage.setItem('taxi_users', JSON.stringify(users)); showToast('تم إنشاء الحساب، سجل دخول'); toggleAuth('login'); }
+    function createTestAccount() { let testEmail='test@taxi.com', testPwd='123456'; let users=JSON.parse(localStorage.getItem('taxi_users')||'[]'); if(!users.find(u=>u.email===testEmail)) users.push({name:'الحساب التجريبي',email:testEmail,password:testPwd}); localStorage.setItem('taxi_users', JSON.stringify(users)); document.getElementById('login-email').value=testEmail; document.getElementById('login-password').value=testPwd; login(); }
+    function logout() { currentUser=null; localStorage.removeItem('taxi_current'); document.getElementById('page-login').classList.add('active'); document.getElementById('page-main').classList.remove('active'); location.reload(); }
+    function renderMainApp() { document.getElementById('page-login').classList.remove('active'); document.getElementById('page-main').classList.add('active'); document.getElementById('user-name').innerHTML=currentUser.name; refreshCarsList(); refreshDriversList(); refreshIncomes(); refreshExpenses(); refreshReportsSelect(); refreshDocsAlerts(); updateKmInfoBlock(); populateCarSelects(); }
+    function refreshCarsList() { let container=document.getElementById('cars-list'); if(!appData.cars.length){container.innerHTML='<div class="empty-msg">لا توجد سيارات. أضف سيارة جديدة</div>';return;} let html=''; appData.cars.forEach((car,idx)=>{ html+=`<div class="car-card"><div class="car-type-icon">${car.type==='small'?'🚕':'🚐'}</div><div class="car-name">${car.name}</div><div class="car-auth">مأذونية: ${car.auth||'—'}</div><div class="car-stats">🔁 ${car.lastKm||0} كم</div><button class="btn-del" style="margin-top:8px;" onclick="deleteCar(${idx})">🗑️ حذف</button></div>`; }); container.innerHTML=html; }
+    function deleteCar(idx) { if(confirm('حذف السيارة سيحذف كل الإيرادات والمصروفات المرتبطة')){ let carId=appData.cars[idx].id||idx; appData.cars.splice(idx,1); appData.incomes=appData.incomes.filter(inc=>inc.carId!==carId); appData.expenses=appData.expenses.filter(exp
