@@ -2,257 +2,100 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0f172a">
-    <title>Taxi Man</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طاكسي حمراء - حسابات</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f1f5f9; height: 100vh; display: flex; flex-direction: column; color: #334155; }
-        .header { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(15, 23, 42, 0.3); }
-        .header h1 { font-size: 1.2rem; font-weight: 700; }
-        .header .user-info { font-size: 0.75rem; opacity: 0.9; text-align: left; }
-        .content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 140px; }
-        .page { display: none; }
-        .page.active { display: block; }
-        .login-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; padding: 20px; }
-        .login-logo { font-size: 4rem; margin-bottom: 10px; }
-        .login-title { font-size: 1.5rem; color: #0f172a; font-weight: 700; margin-bottom: 5px; }
-        .login-subtitle { color: #64748b; font-size: 0.9rem; margin-bottom: 20px; }
-        .login-card { background: white; border-radius: 20px; padding: 30px; width: 100%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
-        .login-toggle { display: flex; background: #f1f5f9; border-radius: 12px; padding: 4px; margin-bottom: 20px; }
-        .login-toggle button { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 10px; font-weight: 600; font-size: 0.9rem; cursor: pointer; color: #64748b; }
-        .login-toggle button.active { background: white; color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .input-group { margin-bottom: 14px; }
-        .input-group.compact { margin-bottom: 8px; }
-        .input-group label { display: block; color: #475569; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
-        .input-group.compact label { font-size: 0.75rem; margin-bottom: 3px; }
-        .input-group input, .input-group select { width: 100%; padding: 13px 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; background: #f8fafc; transition: all 0.3s; color: #0f172a; }
-        .input-group.compact input, .input-group.compact select { padding: 8px 10px; font-size: 0.9rem; border-radius: 8px; }
-        .compact-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .input-group input:focus, .input-group select:focus { outline: none; border-color: #f59e0b; background: white; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1); }
-        .btn-primary { width: 100%; padding: 15px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); transition: all 0.3s; margin-top: 10px; }
-        .btn-primary:active { transform: scale(0.98); }
-        .btn-green { width: 100%; padding: 13px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-top: 10px; }
-        .btn-red { width: 100%; padding: 12px; background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-top: 8px; }
-        .btn-del { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 600; }
-        .btn-blue { width: 100%; padding: 12px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-top: 8px; }
-        .card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
-        .card-title { color: #0f172a; font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f59e0b; display: flex; align-items: center; gap: 8px; }
-        .car-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        .car-card { background: white; border-radius: 14px; padding: 15px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 2px solid transparent; cursor: pointer; transition: all 0.2s; position: relative; }
-        .car-card:active { transform: scale(0.96); }
-        .car-card.selected { border-color: #f59e0b; background: #fffbeb; }
-        .car-card .car-type-icon { font-size: 2.5rem; margin-bottom: 4px; }
-        .car-card .car-type-label { font-size: 0.75rem; color: #64748b; margin-bottom: 4px; }
-        .car-card .car-name { font-weight: 700; color: #0f172a; font-size: 0.9rem; }
-        .car-card .car-auth { font-size: 0.8rem; color: #475569; margin-top: 4px; font-weight: 600; }
-        .car-card .car-stats { font-size: 0.7rem; color: #10b981; margin-top: 6px; font-weight: 600; }
-        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        .stat-card { background: white; border-radius: 14px; padding: 16px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
-        .stat-card h3 { font-size: 1.4rem; color: #0f172a; margin-bottom: 4px; font-weight: 700; }
-        .stat-card p { font-size: 0.75rem; color: #64748b; font-weight: 500; }
-        .stat-card.income h3 { color: #10b981; }
-        .stat-card.expense h3 { color: #ef4444; }
-        .stat-card.profit h3 { color: #f59e0b; }
-        .empty-msg { text-align: center; color: #94a3b8; padding: 40px 20px; font-size: 0.9rem; }
-        .tabs { display: flex; background: white; box-shadow: 0 -4px 20px rgba(0,0,0,0.12); padding: 10px 0 15px; border-top: 2px solid #e2e8f0; position: fixed; bottom: 50px; left: 0; right: 0; z-index: 100; }
-        .tab { flex: 1; padding: 10px 5px; border: none; background: transparent; font-size: 0.85rem; font-weight: 700; color: #94a3b8; cursor: pointer; transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 6px; border-radius: 12px; margin: 0 3px; }
-        .tab.active { color: #f59e0b; background: #fffbeb; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2); }
-        .tab-icon { font-size: 1.8rem; display: block; }
-        .ad-banner { position: fixed; bottom: 0; left: 0; right: 0; background: #f8fafc; border-top: 2px solid #e2e8f0; padding: 8px; text-align: center; font-size: 0.75rem; color: #64748b; z-index: 99; min-height: 50px; display: flex; align-items: center; justify-content: center; }
-        .toast { position: fixed; bottom: 130px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 14px 28px; border-radius: 30px; font-size: 0.85rem; opacity: 0; transition: all 0.3s; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.2); text-align: center; pointer-events: none; }
-        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        .driver-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; font-size: 0.85rem; border-bottom: 1px dashed #e2e8f0; }
-        .driver-name { color: #475569; font-weight: 500; }
-        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
-        .item-info { flex: 1; text-align: right; }
-        .item-amount { font-weight: 700; margin-right: 10px; color: #10b981; }
-        .item-amount.expense-type { color: #ef4444; }
-        .item-date { font-size: 0.75rem; color: #94a3b8; }
-        .km-info { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 12px; margin-bottom: 12px; font-size: 0.85rem; text-align: right; }
-        .km-info .last-km { color: #0284c7; font-weight: 700; }
-        .driver-card { background: white; border-radius: 14px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; border-right: 4px solid #3b82f6; position: relative; text-align: right; }
-        .driver-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .driver-card-name { font-weight: 700; color: #0f172a; font-size: 1rem; }
-        .driver-card-phone { font-size: 0.85rem; color: #64748b; margin-bottom: 6px; }
-        .driver-card-details { font-size: 0.8rem; color: #475569; margin-bottom: 8px; }
-        .driver-card-badge { display: inline-block; background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
-        .report-month { background: #f8fafc; border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: right; }
-        .report-month-title { font-weight: 700; color: #0f172a; font-size: 1rem; margin-bottom: 12px; }
-        .report-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e2e8f0; font-size: 0.85rem; }
-        .report-row.total { font-weight: 700; font-size: 0.95rem; border-top: 2px solid #f59e0b; border-bottom: none; margin-top: 8px; padding-top: 12px; }
-        .report-label { color: #475569; }
-        .report-value { font-weight: 600; }
-        .report-value.income { color: #10b981; }
-        .report-value.expense { color: #ef4444; }
-        .report-value.profit { color: #f59e0b; }
-        
-        .admob-banner { background: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 8px; margin-bottom: 12px; text-align: center; font-size: 0.7rem; color: #64748b; min-height: 50px; display: flex; align-items: center; justify-content: center; }
-        .admob-banner .ad-label { background: #ef4444; color: white; padding: 1px 6px; border-radius: 4px; font-size: 0.6rem; margin-left: 6px; }
-        
-        @media print {
-            .tabs, .ad-banner, .admob-banner, .btn-primary, .btn-green, .btn-red, .btn-blue, .btn-del, .delete-btn { display: none !important; }
-            .content { padding-bottom: 20px; }
-            body { background: white; }
-            .card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
-        }
+        body { font-family: Tahoma, Arial, sans-serif; background-color: #f4f4f4; margin: 0; }
+        .container { max-width: 450px; margin: auto; background: white; min-height: 100vh; position: relative; }
+        /* اللون الأحمر ديال طاكسيات فاس */
+        .header { background: #d32f2f; color: white; padding: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .header h2 { margin: 0; font-size: 24px; }
+        .page { display: none; padding: 20px; }
+        .active { display: block; }
+        button { width: 100%; padding: 14px; margin-top: 15px; background: #d32f2f; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button.test-btn { background: #1976d2; }
+        input { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+        .card { background: #fff; padding: 15px; margin-top: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-right: 5px solid #d32f2f; }
+        .result-box { margin-top: 20px; padding: 15px; background: #e8f5e9; color: #2e7d32; border-radius: 8px; font-weight: bold; text-align: center; display: none; }
     </style>
 </head>
 <body>
-    <div id="app">
-        <!-- صفحة الدخول -->
-        <div id="page-login" class="page active">
-            <div class="login-container">
-                <div class="login-logo">🚕</div>
-                <div class="login-title">Taxi Man</div>
-                <div class="login-subtitle">تتبع أرباح سيارات الأجرة</div>
-                <div class="login-card">
-                    <div class="login-toggle">
-                        <button id="btn-login-tab" class="active" onclick="toggleAuth('login')">تسجيل الدخول</button>
-                        <button id="btn-register-tab" onclick="toggleAuth('register')">حساب جديد</button>
-                    </div>
-                    <div id="login-form">
-                        <div class="input-group">
-                            <label>📧 البريد الإلكتروني</label>
-                            <input type="email" id="login-email" placeholder="example@email.com">
-                        </div>
-                        <div class="input-group">
-                            <label>🔒 كلمة المرور</label>
-                            <input type="password" id="login-password" placeholder="********">
-                        </div>
-                        <button class="btn-primary" onclick="login()">🔐 تسجيل الدخول</button>
-                        <button class="btn-red" onclick="createTestAccount()" style="margin-top: 15px; background: #e0f2fe; color: #0284c7; border-color: #bae6fd;">🧪 تجربة التطبيق فوراً (حساب تجريبي)</button>
-                    </div>
-                    <div id="register-form" style="display:none;">
-                        <div class="input-group">
-                            <label>👤 الاسم الكامل</label>
-                            <input type="text" id="reg-name" placeholder="محمد أحمد">
-                        </div>
-                        <div class="input-group">
-                            <label>📧 البريد الإلكتروني</label>
-                            <input type="email" id="reg-email" placeholder="example@email.com">
-                        </div>
-                        <div class="input-group">
-                            <label>🔒 كلمة المرور</label>
-                            <input type="password" id="reg-password" placeholder="********">
-                        </div>
-                        <div class="input-group">
-                            <label>🔒 تأكيد كلمة المرور</label>
-                            <input type="password" id="reg-confirm" placeholder="********">
-                        </div>
-                        <button class="btn-primary" onclick="register()">✅ إنشاء حساب</button>
-                    </div>
-                </div>
-            </div>
+    <div class="container">
+        <div class="header">
+            <h2>🚕 طاكسي حمراء</h2>
         </div>
 
-        <!-- التطبيق الرئيسي -->
-        <div id="page-main" class="page">
-            <div class="header">
-                <h1>🚕 Taxi Man</h1>
-                <div class="user-info">
-                    <div id="user-name">مرحباً</div>
-                    <button onclick="logout()" style="background:none;border:none;color:white;font-size:0.7rem;cursor:pointer;text-decoration:underline;">خروج</button>
-                </div>
-            </div>
+        <!-- صفحة الدخول -->
+        <div id="loginPage" class="page active">
+            <h3 style="text-align:center; color: #333;">تسجيل الدخول للسائقين</h3>
+            <input type="text" id="username" placeholder="أدخل اسمك هنا...">
+            <button onclick="login()">تسجيل الدخول</button>
             
-            <div class="content">
-                <!-- السيارات -->
-                <div id="tab-cars" class="tab-content">
-                    <div class="admob-banner">
-                        <span class="ad-label">إعلان</span>
-                        <span>AdMob Banner - ca-app-pub-7652843414407661~8783268338</span>
-                    </div>
-                    
-                    <div class="stats-row">
-                        <div class="stat-card income">
-                            <h3 id="total-income">0 د.م</h3>
-                            <p>إجمالي المدخول</p>
-                        </div>
-                        <div class="stat-card expense">
-                            <h3 id="total-expense">0 د.م</h3>
-                            <p>إجمالي المصاريف</p>
-                        </div>
-                    </div>
+            <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ddd;">
+            
+            <button class="test-btn" onclick="quickTest()">🧪 تجربة التطبيق فوراً</button>
+        </div>
 
-                    <div class="card">
-                        <div class="card-title">🚗 سياراتي</div>
-                        <div id="cars-list" class="car-grid"></div>
-                        <button class="btn-green" onclick="showAddCar()">➕ إضافة سيارة جديدة</button>
-                    </div>
-                    
-                    <div id="add-car-form" class="card" style="display:none;">
-                        <div class="card-title">➕ سيارة جديدة</div>
-                        <div class="input-group"><label>🚗 اسم السيارة</label><input type="text" id="car-name" placeholder="مثال: طاكسي 1"></div>
-                        <div class="input-group"><label>📋 رقم المأذونية</label><input type="text" id="car-auth" placeholder="مثال: 12345"></div>
-                        <div class="input-group"><label>🚕 نوع الطاكسي</label>
-                            <select id="car-type"><option value="small">🚕 صغير</option><option value="big">🚐 كبير</option></select>
-                        </div>
-                        <div class="input-group"><label>📊 الكيلومتر الابتدائي</label><input type="number" id="car-km" placeholder="0" value="0"></div>
-                        <button class="btn-primary" onclick="addCar()">💾 حفظ السيارة</button>
-                        <button class="btn-red" onclick="hideAddCar()">❌ إلغاء</button>
-                    </div>
-                </div>
+        <!-- صفحة الحسابات (الروصيطة) -->
+        <div id="dashboardPage" class="page">
+            <h3 style="color: #333;">مرحباً، <span id="driverName" style="color: #d32f2f;"></span></h3>
+            
+            <div class="card">
+                <h4>إدخال حساب الوردية</h4>
+                <input type="number" id="recette" placeholder="شحال الروصيطة؟ (درهم)">
+                <input type="number" id="gazoil" placeholder="شحال المازوط؟ (درهم)">
+                <button onclick="saveData()">حفظ الحساب</button>
+            </div>
 
-                <!-- السائقين -->
-                <div id="tab-drivers" class="tab-content" style="display:none;">
-                    <div class="card">
-                        <div class="card-title">👤 السائقين</div>
-                        <div id="drivers-list"></div>
-                        <button class="btn-green" onclick="showAddDriver()">➕ إضافة سائق جديد</button>
-                    </div>
-                    <div id="add-driver-form" class="card" style="display:none;">
-                        <div class="card-title">➕ سائق جديد</div>
-                        <div class="input-group"><label>👤 الاسم الكامل</label><input type="text" id="driver-name" placeholder="مثال: محمد أحمد"></div>
-                        <div class="compact-row">
-                            <div class="input-group compact"><label>📱 الهاتف</label><input type="tel" id="driver-phone" placeholder="06XXXXXXXX"></div>
-                            <div class="input-group compact"><label>🆔 رقم البطاقة (CIN)</label><input type="text" id="driver-cin" placeholder="AB123456"></div>
-                        </div>
-                        <div class="compact-row">
-                            <div class="input-group compact"><label>📜 رقم رخصة السياقة</label><input type="text" id="driver-license" placeholder="1234567"></div>
-                            <div class="input-group compact"><label>📅 تاريخ انتهاء الرخصة</label><input type="date" id="driver-license-expiry"></div>
-                        </div>
-                        <div class="input-group compact"><label>📝 ملاحظات</label><input type="text" id="driver-notes" placeholder="مثال: سائق دائم"></div>
-                        <button class="btn-primary" onclick="addDriver()">💾 حفظ السائق</button>
-                        <button class="btn-red" onclick="hideAddDriver()">❌ إلغاء</button>
-                    </div>
-                </div>
+            <div id="result" class="result-box"></div>
 
-                <!-- الإيرادات والمصاريف -->
-                <div id="tab-income" class="tab-content" style="display:none;">
-                    <div class="card">
-                        <div class="card-title">💰 تسجيل حركة مالية (للسيارة المحددة)</div>
-                        <div class="input-group">
-                            <label>🛠️ نوع العملية</label>
-                            <select id="trans-type" onchange="toggleKmInput()">
-                                <option value="income">📈 مدخول يومي (رويت)</option>
-                                <option value="expense">📉 مصاريف (إصلاح، وقود، إلخ)</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label>👤 السائق المسؤول</label>
-                            <select id="trans-driver"></select>
-                        </div>
-                        <div class="input-group">
-                            <label>💵 المبلغ (بالدرهم)</label>
-                            <input type="number" id="trans-amount" placeholder="0">
-                        </div>
-                        <div class="input-group" id="km-input-group">
-                            <label>📊 قراءة عداد الكيلومتر الحالية</label>
-                            <input type="number" id="trans-km" placeholder="أدخل عداد الكيلومتر الجديد">
-                        </div>
-                        <div class="input-group">
-                            <label>📝 البيان / التفاصيل</label>
-                            <input type="text" id="trans-desc" placeholder="مثال: رويت نهار، تغيير الزيت...">
-                        </div>
-                        <button class="btn-primary" onclick="addTransaction()">💾 حفظ العملية</button>
-                    </div>
+            <button onclick="logout()" style="background:#757575; margin-top:40px;">رجوع / تسجيل الخروج</button>
+        </div>
+    </div>
 
-                    <div class="card">
-                        <div class="card-title">📋 السجل الأخير للعمليات</div>
-                        <div id="transactions-list"></div>
-                    </div>
-                </div>
+    <!-- الكود لي كيخدم الأزرار -->
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
 
-                <!-- التقارير -->
-           
+        function login() {
+            const user = document.getElementById('username').value;
+            if(user.trim() !== "") {
+                document.getElementById('driverName').innerText = user;
+                showPage('dashboardPage');
+            } else {
+                alert("عافاك دخل السمية ديالك باش تدخل للحساب!");
+            }
+        }
+
+        function quickTest() {
+            document.getElementById('driverName').innerText = "شيفور تجريبي (عمر)";
+            showPage('dashboardPage');
+        }
+
+        function logout() {
+            document.getElementById('username').value = '';
+            document.getElementById('recette').value = '';
+            document.getElementById('gazoil').value = '';
+            document.getElementById('result').style.display = 'none';
+            showPage('loginPage');
+        }
+
+        function saveData() {
+            const recette = document.getElementById('recette').value;
+            const gazoil = document.getElementById('gazoil').value;
+            const resultBox = document.getElementById('result');
+            
+            if(recette !== "" && gazoil !== "") {
+                const safi = parseFloat(recette) - parseFloat(gazoil);
+                resultBox.style.display = 'block';
+                resultBox.innerHTML = "✅ تم حفظ الحساب بنجاح!<br><br>الصافي هو: " + safi + " درهم";
+            } else {
+                alert("عافاك دخل الروصيطة والمازوط بجوج!");
+            }
+        }
+    </script>
+</body>
+</html>
