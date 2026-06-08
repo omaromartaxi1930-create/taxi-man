@@ -1,5 +1,3 @@
-
-```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -17,7 +15,6 @@
         .content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 130px; }
         .page { display: none; }
         .page.active { display: block; }
-        /* أنماط أخرى محسنة */
         .login-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; padding: 20px; }
         .login-logo { font-size: 4rem; margin-bottom: 10px; }
         .login-title { font-size: 1.8rem; color: #0f172a; font-weight: 800; margin-bottom: 5px; }
@@ -61,6 +58,9 @@
         .badge { padding: 2px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 700; }
         .driver-card { border-right: 4px solid #3b82f6; margin-bottom: 12px; background: white; border-radius: 20px; padding: 12px; }
         .km-calc { background: #f0f9ff; border-radius: 16px; padding: 12px; margin-bottom: 12px; }
+        .btn-del { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 600; margin-top: 8px; }
+        .empty-msg { text-align: center; color: #94a3b8; padding: 40px 20px; font-size: 0.9rem; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
         @media print { .tabs, .ad-banner-bottom, .admob-banner, .btn-* { display: none; } }
     </style>
 </head>
@@ -78,8 +78,8 @@
                     <button id="btn-register-tab" onclick="toggleAuth('register')">حساب جديد</button>
                 </div>
                 <div id="login-form">
-                    <div class="input-group"><label>📧 البريد الإلكتروني</label><input type="email" id="login-email" placeholder="admin@taxi.com"></div>
-                    <div class="input-group"><label>🔒 كلمة المرور</label><input type="password" id="login-password" placeholder="••••••••"></div>
+                    <div class="input-group"><label>📧 البريد الإلكتروني</label><input type="email" id="login-email" placeholder="admin@taxi.com" value="test@taxi.com"></div>
+                    <div class="input-group"><label>🔒 كلمة المرور</label><input type="password" id="login-password" placeholder="••••••••" value="123456"></div>
                     <button class="btn-primary" onclick="login()">🔐 دخول</button>
                     <button class="btn-red" onclick="createTestAccount()" style="margin-top:12px; background:#e0f2fe; color:#0369a1;">🚀 تجربة التطبيق (حساب تجريبي)</button>
                 </div>
@@ -107,7 +107,7 @@
                 <div class="card"><div class="card-title">🚗 سيارتي</div><div id="cars-list" class="car-grid"></div><button class="btn-primary btn-green" onclick="showAddCar()">➕ سيارة جديدة</button></div>
                 <div id="add-car-form" class="card" style="display:none;"><div class="card-title">➕ تفاصيل السيارة</div><div class="input-group"><label>اسم السيارة</label><input id="car-name" placeholder="مثال: تويوتا"></div><div class="input-group"><label>رقم المأذونية</label><input id="car-auth" placeholder="A1234"></div><div class="input-group"><label>تاريخ انتهاء المأذونية</label><input type="date" id="car-license-expiry"></div><div class="input-group"><label>النوع</label><select id="car-type"><option value="small">🚕 صغير (2.5 درهم/كم)</option><option value="big">🚐 كبير (3 درهم/كم)</option></select></div><div class="input-group"><label>الكيلومتر الابتدائي</label><input type="number" id="car-km" value="0"></div><button class="btn-primary" onclick="addCar()">💾 حفظ</button><button class="btn-red" onclick="hideAddCar()">إلغاء</button></div>
             </div>
-            <div id="tab-drivers" class="tab-content" style="display:none;"><div class="admob-banner" style="background:#eef2ff; border-radius:16px; padding:8px; margin-bottom:12px; text-align:center;">📢 AdMob Banner</div><div class="card"><div class="card-title">👤 السائقين</div><div id="drivers-list"></div><button class="btn-primary btn-green" onclick="showAddDriver()">➕ سائق جديد</button></div><div id="add-driver-form" class="card" style="display:none;"><div class="card-title">سائق جديد</div><div class="input-group"><label>الاسم الكامل</label><input id="driver-name"></div><div class="input-group"><label>الهاتف</label><input id="driver-phone"></div><div class="input-group"><label>رقم البطاقة CIN</label><input id="driver-cin"></div><div class="input-group"><label>رخصة السياقة</label><input id="driver-license"></div><div class="input-group"><label>انتهاء الرخصة</label><input type="date" id="driver-license-expiry"></div><div class="input-group"><label>ملاحظات</label><input id="driver-notes"></div><button class="btn-primary" onclick="addDriver()">تسجيل</button><button class="btn-red" onclick="hideAddDriver()">إلغاء</button></div></div>
+            <div id="tab-drivers" class="tab-content" style="display:none;"><div class="admob-banner" style="background:#eef2ff; border-radius:16px; padding:8px; margin-bottom:12px;">📢 AdMob Banner</div><div class="card"><div class="card-title">👤 السائقين</div><div id="drivers-list"></div><button class="btn-primary btn-green" onclick="showAddDriver()">➕ سائق جديد</button></div><div id="add-driver-form" class="card" style="display:none;"><div class="card-title">سائق جديد</div><div class="input-group"><label>الاسم الكامل</label><input id="driver-name"></div><div class="input-group"><label>الهاتف</label><input id="driver-phone"></div><div class="input-group"><label>رقم البطاقة CIN</label><input id="driver-cin"></div><div class="input-group"><label>رخصة السياقة</label><input id="driver-license"></div><div class="input-group"><label>انتهاء الرخصة</label><input type="date" id="driver-license-expiry"></div><div class="input-group"><label>ملاحظات</label><input id="driver-notes"></div><button class="btn-primary" onclick="addDriver()">تسجيل</button><button class="btn-red" onclick="hideAddDriver()">إلغاء</button></div></div>
             <div id="tab-income" class="tab-content" style="display:none;"><div class="admob-banner" style="background:#eef2ff; border-radius:16px; padding:8px; margin-bottom:12px;">📢 AdMob Banner</div><div class="card"><div class="card-title">💰 إيراد يومي</div><div class="input-group"><label>🚖 السيارة</label><select id="income-car-id"></select></div><div class="input-group"><label>👨‍✈️ السائق</label><select id="income-driver-id"><option value="">بدون سائق</option></select></div><div class="input-group"><label>📅 التاريخ</label><input type="date" id="income-date"></div><div class="km-calc" id="km-info-block"><span>📊 سيتم حساب الفرق بناءً على آخر كيلومتر</span></div><div class="input-group"><label>الكيلومتر الحالي</label><input type="number" id="current-km" placeholder="آخر قراءة"></div><div class="input-group"><label>مبلغ الصندوق الإضافي (درهم)</label><input type="number" id="extra-money" value="0"></div><div class="input-group"><label>أو إجمالي المبلغ (درهم)</label><input type="number" id="total-manual" placeholder="اتركه فارغاً للحساب التلقائي"></div><button class="btn-primary" onclick="addIncome()">تسجيل الإيراد</button></div><div class="card"><div class="card-title">📋 آخر الإيرادات</div><div id="incomes-list"></div></div></div>
             <div id="tab-expense" class="tab-content" style="display:none;"><div class="admob-banner" style="background:#eef2ff; border-radius:16px; padding:8px; margin-bottom:12px;">📢 AdMob Banner</div><div class="card"><div class="card-title">💸 مصروف جديد</div><div class="input-group"><label>السيارة</label><select id="expense-car-id"></select></div><div class="input-group"><label>التاريخ</label><input type="date" id="expense-date"></div><div class="input-group"><label>الفئة</label><select id="expense-cat"><option value="بنزين">⛽ بنزين</option><option value="صيانة">🔧 صيانة</option><option value="غرامة">📜 غرامة</option><option value="إصلاح">🛠️ إصلاح</option><option value="أخرى">📌 أخرى</option></select></div><div class="input-group"><label>المبلغ (درهم)</label><input type="number" id="expense-amount"></div><div class="input-group"><label>ملاحظات</label><input id="expense-note"></div><button class="btn-primary" onclick="addExpense()">إضافة مصروف</button></div><div id="expenses-list"></div></div>
             <div id="tab-reports" class="tab-content" style="display:none;"><div class="card"><div class="card-title">📊 التقارير المالية</div><div class="input-group"><label>اختر السيارة</label><select id="report-car-select"></select></div><div class="input-group"><label>الشهر</label><input type="month" id="report-month"></div><button class="btn-primary" onclick="generateReport()">عرض التقرير</button><div id="report-result"></div><button class="btn-primary btn-blue" onclick="window.print()">🖨️ طباعة التقرير</button></div></div>
@@ -128,15 +128,86 @@
 
 <script>
     let currentUser = null;
-    let appData = { users: [], cars: [], drivers: [], incomes: [], expenses: [] };
-    function saveDataToLocal() { if(currentUser) localStorage.setItem(`taxi_${currentUser.email}`, JSON.stringify({ cars: appData.cars, drivers: appData.drivers, incomes: appData.incomes, expenses: appData.expenses })); }
-    function loadUserData() { if(!currentUser) return; let raw = localStorage.getItem(`taxi_${currentUser.email}`); if(raw) { let data=JSON.parse(raw); appData.cars=data.cars||[]; appData.drivers=data.drivers||[]; appData.incomes=data.incomes||[]; appData.expenses=data.expenses||[]; } else { appData.cars=[]; appData.drivers=[]; appData.incomes=[]; appData.expenses=[]; } }
-    function showToast(msg, duration=2000) { let t=document.getElementById('toastMsg'); t.innerText=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), duration); }
-    function toggleAuth(type) { document.getElementById('login-form').style.display = type==='login'?'block':'none'; document.getElementById('register-form').style.display = type==='register'?'block':'none'; document.querySelectorAll('.login-toggle button').forEach(btn=>btn.classList.remove('active')); if(type==='login') document.getElementById('btn-login-tab').classList.add('active'); else document.getElementById('btn-register-tab').classList.add('active'); }
-    function login() { let email=document.getElementById('login-email').value.trim(); let pwd=document.getElementById('login-password').value; let users=JSON.parse(localStorage.getItem('taxi_users')||'[]'); let user=users.find(u=>u.email===email && u.password===pwd); if(user) { currentUser=user; localStorage.setItem('taxi_current', JSON.stringify(user)); loadUserData(); renderMainApp(); showToast(`مرحباً ${user.name}`); } else showToast('بيانات دخول خاطئة'); }
-    function register() { let name=document.getElementById('reg-name').value; let email=document.getElementById('reg-email').value.trim(); let pwd=document.getElementById('reg-password').value; let confirm=document.getElementById('reg-confirm').value; if(!name||!email||!pwd) return showToast('املأ جميع الحقول'); if(pwd!==confirm) return showToast('كلمة المرور غير متطابقة'); let users=JSON.parse(localStorage.getItem('taxi_users')||'[]'); if(users.find(u=>u.email===email)) return showToast('البريد موجود مسبقاً'); users.push({name, email, password:pwd}); localStorage.setItem('taxi_users', JSON.stringify(users)); showToast('تم إنشاء الحساب، سجل دخول'); toggleAuth('login'); }
-    function createTestAccount() { let testEmail='test@taxi.com', testPwd='123456'; let users=JSON.parse(localStorage.getItem('taxi_users')||'[]'); if(!users.find(u=>u.email===testEmail)) users.push({name:'الحساب التجريبي',email:testEmail,password:testPwd}); localStorage.setItem('taxi_users', JSON.stringify(users)); document.getElementById('login-email').value=testEmail; document.getElementById('login-password').value=testPwd; login(); }
-    function logout() { currentUser=null; localStorage.removeItem('taxi_current'); document.getElementById('page-login').classList.add('active'); document.getElementById('page-main').classList.remove('active'); location.reload(); }
-    function renderMainApp() { document.getElementById('page-login').classList.remove('active'); document.getElementById('page-main').classList.add('active'); document.getElementById('user-name').innerHTML=currentUser.name; refreshCarsList(); refreshDriversList(); refreshIncomes(); refreshExpenses(); refreshReportsSelect(); refreshDocsAlerts(); updateKmInfoBlock(); populateCarSelects(); }
-    function refreshCarsList() { let container=document.getElementById('cars-list'); if(!appData.cars.length){container.innerHTML='<div class="empty-msg">لا توجد سيارات. أضف سيارة جديدة</div>';return;} let html=''; appData.cars.forEach((car,idx)=>{ html+=`<div class="car-card"><div class="car-type-icon">${car.type==='small'?'🚕':'🚐'}</div><div class="car-name">${car.name}</div><div class="car-auth">مأذونية: ${car.auth||'—'}</div><div class="car-stats">🔁 ${car.lastKm||0} كم</div><button class="btn-del" style="margin-top:8px;" onclick="deleteCar(${idx})">🗑️ حذف</button></div>`; }); container.innerHTML=html; }
-    function deleteCar(idx) { if(confirm('حذف السيارة سيحذف كل الإيرادات والمصروفات المرتبطة')){ let carId=appData.cars[idx].id||idx; appData.cars.splice(idx,1); appData.incomes=appData.incomes.filter(inc=>inc.carId!==carId); appData.expenses=appData.expenses.filter(exp
+    let appData = { cars: [], drivers: [], incomes: [], expenses: [] };
+
+    // دالة مساعدة لعرض الإشعارات
+    function showToast(msg, duration = 2000) {
+        let toast = document.getElementById('toastMsg');
+        toast.innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), duration);
+    }
+
+    // حفظ بيانات المستخدم الحالي في localStorage
+    function saveDataToLocal() {
+        if (currentUser) {
+            localStorage.setItem(`taxi_${currentUser.email}`, JSON.stringify({
+                cars: appData.cars,
+                drivers: appData.drivers,
+                incomes: appData.incomes,
+                expenses: appData.expenses
+            }));
+        }
+    }
+
+    // تحميل بيانات المستخدم الحالي
+    function loadUserData() {
+        if (!currentUser) return;
+        let raw = localStorage.getItem(`taxi_${currentUser.email}`);
+        if (raw) {
+            let data = JSON.parse(raw);
+            appData.cars = data.cars || [];
+            appData.drivers = data.drivers || [];
+            appData.incomes = data.incomes || [];
+            appData.expenses = data.expenses || [];
+        } else {
+            appData.cars = [];
+            appData.drivers = [];
+            appData.incomes = [];
+            appData.expenses = [];
+            // إضافة بيانات تجريبية للمستخدم الجديد ليجرب التطبيق بشكل أسرع
+            if (currentUser.email === 'test@taxi.com') {
+                appData.cars.push({ id: 1001, name: 'طاكسي المدينة', auth: '1234/T', type: 'small', lastKm: 12500, initialKm: 12000, licenseExpiry: '2025-12-31' });
+                appData.cars.push({ id: 1002, name: 'طاكسي المطار', auth: '5678/M', type: 'big', lastKm: 8750, initialKm: 8500, licenseExpiry: '2025-06-15' });
+                appData.drivers.push({ id: 2001, name: 'أحمد علي', phone: '0612345678', cin: 'AB123456', license: 'L12345', licenseExpiry: '2026-01-20', notes: 'سائق محترف' });
+                appData.incomes.push({ id: 3001, carId: 1001, driverId: 2001, date: '2025-01-15', currentKm: 12650, diffKm: 150, amount: 375, extra: 0, manualMode: false });
+                appData.expenses.push({ id: 4001, carId: 1001, date: '2025-01-14', category: 'بنزين', amount: 120, note: 'تعبئة كاملة' });
+                saveDataToLocal();
+            }
+        }
+    }
+
+    // تبديل بين نماذج الدخول والتسجيل
+    function toggleAuth(type) {
+        document.getElementById('login-form').style.display = type === 'login' ? 'block' : 'none';
+        document.getElementById('register-form').style.display = type === 'register' ? 'block' : 'none';
+        document.querySelectorAll('.login-toggle button').forEach(btn => btn.classList.remove('active'));
+        if (type === 'login') document.getElementById('btn-login-tab').classList.add('active');
+        else document.getElementById('btn-register-tab').classList.add('active');
+    }
+
+    // تسجيل الدخول
+    function login() {
+        let email = document.getElementById('login-email').value.trim();
+        let pwd = document.getElementById('login-password').value;
+        let users = JSON.parse(localStorage.getItem('taxi_users') || '[]');
+        let user = users.find(u => u.email === email && u.password === pwd);
+        if (user) {
+            currentUser = user;
+            localStorage.setItem('taxi_current', JSON.stringify(user));
+            loadUserData();
+            renderMainApp();
+            showToast(`مرحباً ${user.name}`);
+        } else {
+            showToast('البريد الإلكتروني أو كلمة المرور غير صحيحة');
+        }
+    }
+
+    // إنشاء حساب جديد
+    function register() {
+        let name = document.getElementById('reg-name').value.trim();
+        let email = document.getElementById('reg-email').value.trim();
+        let pwd = document.getElementById('reg-password').value;
+        let confirm = document.getElementById('reg-confirm').value;
+        if (!name || !email || !pwd) return showToast('املأ جميع الحقول');
+        if (pwd !== confirm) return sh
