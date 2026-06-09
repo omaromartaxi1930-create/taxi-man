@@ -7,7 +7,7 @@
     <title>🚕 Taxi Man - إدارة أسطول سيارات الأجرة</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f1f5f9; height: 100vh; display: flex; flex-direction: column; color: #1e293b; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Cairo'; background: #f1f5f9; height: 100vh; display: flex; flex-direction: column; color: #1e293b; }
         .header { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(15, 23, 42, 0.3); }
         .header h1 { font-size: 1.3rem; font-weight: 800; }
         .user-info { font-size: 0.8rem; opacity: 0.95; text-align: left; display: flex; gap: 12px; align-items: center; }
@@ -38,36 +38,29 @@
         .car-card { background: white; border-radius: 20px; padding: 12px; text-align: center; border: 2px solid #e2e8f0; cursor: pointer; transition: 0.1s; }
         .car-card.selected { border-color: #f59e0b; background: #fffbeb; }
         .car-card .car-type-icon { font-size: 2rem; }
-        .car-name { font-weight: 800; font-size: 0.9rem; }
+        .car-name { font-weight: 800; font-size: 0.9rem; margin-top: 5px;}
         .car-auth { font-size: 0.7rem; color: #475569; }
-        .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .stat-card { background: white; border-radius: 20px; padding: 12px; text-align: center; }
-        .stat-card h3 { font-size: 1.5rem; font-weight: 800; }
         .tabs { display: flex; background: white; box-shadow: 0 -6px 25px rgba(0,0,0,0.1); padding: 8px 0 12px; border-top: 1px solid #e2e8f0; position: fixed; bottom: 55px; left: 0; right: 0; z-index: 100; justify-content: space-around; }
         .tab { flex: 1; text-align: center; background: none; border: none; font-size: 0.7rem; font-weight: 700; color: #94a3b8; padding: 6px 0; cursor: pointer; border-radius: 30px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .tab.active { color: #f59e0b; background: #fffbeb; }
         .tab-icon { font-size: 1.6rem; }
         .ad-banner-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 6px; text-align: center; font-size: 0.7rem; color: #475569; z-index: 99; min-height: 48px; display: flex; align-items: center; justify-content: center; }
-        .toast { position: fixed; bottom: 130px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 12px 24px; border-radius: 40px; font-size: 0.8rem; opacity: 0; transition: 0.2s; z-index: 1200; }
+        .toast { position: fixed; bottom: 130px; left: 50%; transform: translateX(-50%) translateY(100px); background: #0f172a; color: white; padding: 12px 24px; border-radius: 40px; font-size: 0.8rem; opacity: 0; transition: 0.2s; z-index: 1200; pointer-events: none; }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        .doc-card { border-right: 5px solid; padding: 12px; margin-bottom: 10px; border-radius: 16px; background: white; }
-        .doc-card.valid { border-color: #10b981; }
-        .doc-card.warning { border-color: #f59e0b; background: #fffbeb; }
-        .doc-card.danger { border-color: #ef4444; background: #fef2f2; }
-        .row-flex { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; }
-        .badge { padding: 2px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 700; }
-        .driver-card { border-right: 4px solid #3b82f6; margin-bottom: 12px; background: white; border-radius: 20px; padding: 12px; }
-        .km-calc { background: #f0f9ff; border-radius: 16px; padding: 12px; margin-bottom: 12px; }
-        .btn-del { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 600; margin-top: 8px; }
-        .empty-msg { text-align: center; color: #94a3b8; padding: 40px 20px; font-size: 0.9rem; }
+        .driver-card { border-right: 4px solid #3b82f6; margin-bottom: 12px; background: #f8fafc; border-radius: 12px; padding: 12px; }
+        .km-calc { background: #f0f9ff; border-radius: 16px; padding: 12px; margin-bottom: 12px; font-size: 0.85rem;}
+        .empty-msg { text-align: center; color: #94a3b8; padding: 20px; font-size: 0.9rem; }
         .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
-        @media print { .tabs, .ad-banner-bottom, .admob-banner, .btn-* { display: none; } }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .report-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .summary-box { background: #f8fafc; padding: 15px; border-radius: 15px; text-align: center; }
+        .summary-box h4 { margin-bottom: 5px; color: #475569; font-size: 0.85rem;}
+        .summary-box span { font-size: 1.2rem; font-weight: 800; color: #0f172a;}
+        .btn-del { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 600; margin-top: 8px; }
+        @media print { .tabs, .ad-banner-bottom, .btn-primary, .btn-del { display: none !important; } }
     </style>
 </head>
 <body>
 <div id="app">
-    <!-- تسجيل الدخول -->
     <div id="page-login" class="page active">
         <div class="login-container">
             <div class="login-logo">🚕</div>
@@ -79,10 +72,16 @@
                     <button id="btn-register-tab" onclick="toggleAuth('register')">حساب جديد</button>
                 </div>
                 <div id="login-form">
-                    <div class="input-group"><label>📧 البريد الإلكتروني</label><input type="email" id="login-email" placeholder="admin@taxi.com" value="test@taxi.com"></div>
-                    <div class="input-group"><label>🔒 كلمة المرور</label><input type="password" id="login-password" placeholder="••••••••" value="123456"></div>
+                    <div class="input-group">
+                        <label>📧 البريد الإلكتروني</label>
+                        <input type="email" id="login-email" placeholder="admin@taxi.com">
+                    </div>
+                    <div class="input-group">
+                        <label>🔒 كلمة المرور</label>
+                        <input type="password" id="login-password" placeholder="••••••••">
+                    </div>
                     <button class="btn-primary" id="loginBtn">🔐 دخول</button>
-                    <button class="btn-red" id="testBtn" style="margin-top:12px; background:#e0f2fe; color:#0369a1;">🚀 تجربة التطبيق (حساب تجريبي)</button>
+                    <button class="btn-red" id="testBtn" style="margin-top:12px; background:#e0f2fe; color:#0369a1; border-color:#bae6fd;">🚀 تجربة التطبيق (حساب تجريبي)</button>
                 </div>
                 <div id="register-form" style="display:none;">
                     <div class="input-group"><label>👤 الاسم الكامل</label><input type="text" id="reg-name" placeholder="أحمد محمد"></div>
@@ -95,144 +94,601 @@
         </div>
     </div>
 
-    <!-- الرئيسية -->
     <div id="page-main" class="page">
         <div class="header">
             <h1>🚕 Taxi Man</h1>
-            <div class="user-info"><span id="user-name">مرحباً</span><button class="logout-btn" id="logoutBtn">خروج</button></div>
-        </div>
-        <div class="content" id="mainContent">
-            <!-- الأقسام -->
-            <div id="tab-cars" class="tab-content active">
-                <div class="card"><div class="card-title">🚗 سيارتي</div><div id="cars-list" class="car-grid"></div><button class="btn-primary btn-green" id="showAddCarBtn">➕ سيارة جديدة</button></div>
-                <div id="add-car-form" class="card" style="display:none;"><div class="card-title">➕ تفاصيل السيارة</div><div class="input-group"><label>اسم السيارة</label><input id="car-name" placeholder="مثال: تويوتا"></div><div class="input-group"><label>رقم المأذونية</label><input id="car-auth" placeholder="A1234"></div><div class="input-group"><label>تاريخ انتهاء المأذونية</label><input type="date" id="car-license-expiry"></div><div class="input-group"><label>النوع</label><select id="car-type"><option value="small">🚕 صغير (2.5 درهم/كم)</option><option value="big">🚐 كبير (3 درهم/كم)</option></select></div><div class="input-group"><label>الكيلومتر الابتدائي</label><input type="number" id="car-km" value="0"></div><button class="btn-primary" id="saveCarBtn">💾 حفظ</button><button class="btn-red" id="cancelCarBtn">إلغاء</button></div>
+            <div class="user-info">
+                <span id="user-name">مرحباً</span>
+                <button class="logout-btn" id="logoutBtn">خروج</button>
             </div>
-            <div id="tab-drivers" class="tab-content" style="display:none;"><div class="card"><div class="card-title">👤 السائقين</div><div id="drivers-list"></div><button class="btn-primary btn-green" id="showAddDriverBtn">➕ سائق جديد</button></div><div id="add-driver-form" class="card" style="display:none;"><div class="card-title">سائق جديد</div><div class="input-group"><label>الاسم الكامل</label><input id="driver-name"></div><div class="input-group"><label>الهاتف</label><input id="driver-phone"></div><div class="input-group"><label>رقم البطاقة CIN</label><input id="driver-cin"></div><div class="input-group"><label>رخصة السياقة</label><input id="driver-license"></div><div class="input-group"><label>انتهاء الرخصة</label><input type="date" id="driver-license-expiry"></div><div class="input-group"><label>ملاحظات</label><input id="driver-notes"></div><button class="btn-primary" id="saveDriverBtn">تسجيل</button><button class="btn-red" id="cancelDriverBtn">إلغاء</button></div></div>
-            <div id="tab-income" class="tab-content" style="display:none;"><div class="card"><div class="card-title">💰 إيراد يومي</div><div class="input-group"><label>🚖 السيارة</label><select id="income-car-id"></select></div><div class="input-group"><label>👨‍✈️ السائق</label><select id="income-driver-id"><option value="">بدون سائق</option></select></div><div class="input-group"><label>📅 التاريخ</label><input type="date" id="income-date"></div><div class="km-calc" id="km-info-block"><span>📊 سيتم حساب الفرق بناءً على آخر كيلومتر</span></div><div class="input-group"><label>الكيلومتر الحالي</label><input type="number" id="current-km" placeholder="آخر قراءة"></div><div class="input-group"><label>مبلغ الصندوق الإضافي (درهم)</label><input type="number" id="extra-money" value="0"></div><div class="input-group"><label>أو إجمالي المبلغ (درهم)</label><input type="number" id="total-manual" placeholder="اتركه فارغاً للحساب التلقائي"></div><button class="btn-primary" id="addIncomeBtn">تسجيل الإيراد</button></div><div class="card"><div class="card-title">📋 آخر الإيرادات</div><div id="incomes-list"></div></div></div>
-            <div id="tab-expense" class="tab-content" style="display:none;"><div class="card"><div class="card-title">💸 مصروف جديد</div><div class="input-group"><label>السيارة</label><select id="expense-car-id"></select></div><div class="input-group"><label>التاريخ</label><input type="date" id="expense-date"></div><div class="input-group"><label>الفئة</label><select id="expense-cat"><option value="بنزين">⛽ بنزين</option><option value="صيانة">🔧 صيانة</option><option value="غرامة">📜 غرامة</option><option value="إصلاح">🛠️ إصلاح</option><option value="أخرى">📌 أخرى</option></select></div><div class="input-group"><label>المبلغ (درهم)</label><input type="number" id="expense-amount"></div><div class="input-group"><label>ملاحظات</label><input id="expense-note"></div><button class="btn-primary" id="addExpenseBtn">إضافة مصروف</button></div><div id="expenses-list"></div></div>
-            <div id="tab-reports" class="tab-content" style="display:none;"><div class="card"><div class="card-title">📊 التقارير المالية</div><div class="input-group"><label>اختر السيارة</label><select id="report-car-select"></select></div><div class="input-group"><label>الشهر</label><input type="month" id="report-month"></div><button class="btn-primary" id="generateReportBtn">عرض التقرير</button><div id="report-result"></div><button class="btn-primary btn-blue" onclick="window.print()">🖨️ طباعة التقرير</button></div></div>
-            <div id="tab-documents" class="tab-content" style="display:none;"><div class="card"><div class="card-title">⚠️ تنبيهات المستندات</div><div id="docs-alerts"></div></div></div>
         </div>
+        
+        <div class="content" id="mainContent">
+            <div id="tab-cars" class="tab-content active">
+                <div id="cars-main-view" class="card">
+                    <div class="card-title">🚗 أسطول السيارات</div>
+                    <div id="cars-list" class="car-grid"></div>
+                    <button class="btn-primary btn-green" id="showAddCarBtn">➕ إضافة سيارة جديدة</button>
+                </div>
+                <div id="add-car-form" class="card" style="display:none;">
+                    <div class="card-title">➕ تفاصيل السيارة</div>
+                    <div class="input-group"><label>اسم/رقم السيارة</label><input id="car-name" placeholder="مثال: طاكسي 1"></div>
+                    <div class="input-group"><label>رقم المأذونية (الكريمة)</label><input id="car-auth" placeholder="A1234"></div>
+                    <div class="input-group"><label>تاريخ انتهاء المأذونية</label><input type="date" id="car-license-expiry"></div>
+                    <div class="input-group">
+                        <label>نوع السيارة</label>
+                        <select id="car-type">
+                            <option value="small">🚕 صغير</option>
+                            <option value="big">🚐 كبير</option>
+                        </select>
+                    </div>
+                    <div class="input-group"><label>قراءة العداد الحالية (كم)</label><input type="number" id="car-km" value="0"></div>
+                    <button class="btn-primary" id="saveCarBtn">💾 حفظ السيارة</button>
+                    <button class="btn-red" id="cancelCarBtn" style="margin-top: 10px; width: 100%; padding: 14px; border-radius: 40px; font-weight: bold;">إلغاء</button>
+                </div>
+            </div>
+
+            <div id="tab-drivers" class="tab-content" style="display:none;">
+                <div id="drivers-main-view" class="card">
+                    <div class="card-title">👤 السائقين</div>
+                    <div id="drivers-list"></div>
+                    <button class="btn-primary btn-green" id="showAddDriverBtn">➕ إضافة سائق جديد</button>
+                </div>
+                <div id="add-driver-form" class="card" style="display:none;">
+                    <div class="card-title">👤 تفاصيل السائق</div>
+                    <div class="input-group"><label>الاسم الكامل</label><input id="driver-name"></div>
+                    <div class="input-group"><label>رقم الهاتف</label><input type="tel" id="driver-phone"></div>
+                    <div class="input-group"><label>رقم البطاقة الوطنية (CIN)</label><input id="driver-cin"></div>
+                    <div class="input-group"><label>رقم رخصة السياقة</label><input id="driver-license"></div>
+                    <div class="input-group"><label>تاريخ انتهاء الرخصة</label><input type="date" id="driver-license-expiry"></div>
+                    <button class="btn-primary" id="saveDriverBtn">تسجيل السائق</button>
+                    <button class="btn-red" id="cancelDriverBtn" style="margin-top: 10px; width: 100%; padding: 14px; border-radius: 40px; font-weight: bold;">إلغاء</button>
+                </div>
+            </div>
+
+            <div id="tab-income" class="tab-content" style="display:none;">
+                <div class="card">
+                    <div class="card-title">💰 تسجيل إيراد يومي</div>
+                    <div class="input-group">
+                        <label>🚖 اختر السيارة</label>
+                        <select id="income-car-id"></select>
+                    </div>
+                    <div class="input-group">
+                        <label>👨‍✈️ اختر السائق</label>
+                        <select id="income-driver-id"><option value="">بدون سائق محدد</option></select>
+                    </div>
+                    <div class="input-group">
+                        <label>📅 التاريخ</label>
+                        <input type="date" id="income-date">
+                    </div>
+                    <div class="input-group">
+                        <label>إجمالي الإيراد (درهم)</label>
+                        <input type="number" id="total-manual" placeholder="المبلغ الصافي المستلم">
+                    </div>
+                    <button class="btn-primary" id="addIncomeBtn">تسجيل الإيراد</button>
+                </div>
+                <div class="card">
+                    <div class="card-title">📋 سجل الإيرادات الحديثة</div>
+                    <div id="incomes-list"></div>
+                </div>
+            </div>
+
+            <div id="tab-expense" class="tab-content" style="display:none;">
+                <div class="card">
+                    <div class="card-title">💸 تسجيل مصروف</div>
+                    <div class="input-group">
+                        <label>السيارة</label>
+                        <select id="expense-car-id"></select>
+                    </div>
+                    <div class="input-group">
+                        <label>التاريخ</label>
+                        <input type="date" id="expense-date">
+                    </div>
+                    <div class="input-group">
+                        <label>الفئة</label>
+                        <select id="expense-cat">
+                            <option value="بنزين/غازوال">⛽ بنزين/غازوال</option>
+                            <option value="صيانة دورية">🔧 صيانة دورية</option>
+                            <option value="إصلاح أعطال">🛠️ إصلاح أعطال</option>
+                            <option value="غرامة/مخالفة">📜 غرامة/مخالفة</option>
+                            <option value="تأمين">🛡️ تأمين</option>
+                            <option value="أخرى">📌 أخرى</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>المبلغ (درهم)</label>
+                        <input type="number" id="expense-amount">
+                    </div>
+                    <div class="input-group">
+                        <label>ملاحظات إضافية</label>
+                        <input type="text" id="expense-note">
+                    </div>
+                    <button class="btn-primary" id="addExpenseBtn">إضافة المصروف</button>
+                </div>
+                <div class="card">
+                    <div class="card-title">📉 سجل المصروفات الحديثة</div>
+                    <div id="expenses-list"></div>
+                </div>
+            </div>
+
+            <div id="tab-reports" class="tab-content" style="display:none;">
+                <div class="card">
+                    <div class="card-title">📊 التقرير المالي الشهري</div>
+                    <div class="input-group">
+                        <label>اختر السيارة</label>
+                        <select id="report-car-select"><option value="all">جميع السيارات</option></select>
+                    </div>
+                    <div class="input-group">
+                        <label>اختر الشهر</label>
+                        <input type="month" id="report-month">
+                    </div>
+                    <button class="btn-primary" id="generateReportBtn">عرض التقرير</button>
+                </div>
+                <div id="report-result" style="display: none;" class="card">
+                    <div class="card-title" id="report-title">نتيجة التقرير</div>
+                    <div class="report-summary">
+                        <div class="summary-box" style="background:#ecfdf5;">
+                            <h4>إجمالي الإيرادات</h4>
+                            <span style="color:#10b981;" id="report-total-income">0</span> درهم
+                        </div>
+                        <div class="summary-box" style="background:#fef2f2;">
+                            <h4>إجمالي المصروفات</h4>
+                            <span style="color:#ef4444;" id="report-total-expense">0</span> درهم
+                        </div>
+                        <div class="summary-box" style="grid-column: span 2; background:#e0f2fe;">
+                            <h4>الصافي (الأرباح)</h4>
+                            <span style="color:#0284c7;" id="report-net-profit">0</span> درهم
+                        </div>
+                    </div>
+                    <button class="btn-primary btn-blue" onclick="window.print()" style="margin-top:15px;">🖨️ طباعة التقرير</button>
+                </div>
+            </div>
+
+        </div>
+
         <div class="tabs">
-            <button class="tab" data-tab="cars"><span class="tab-icon">🚗</span><span>سيارات</span></button>
-            <button class="tab" data-tab="drivers"><span class="tab-icon">👤</span><span>سائقين</span></button>
+            <button class="tab active" data-tab="cars"><span class="tab-icon">🚗</span><span>السيارات</span></button>
+            <button class="tab" data-tab="drivers"><span class="tab-icon">👤</span><span>السائقين</span></button>
             <button class="tab" data-tab="income"><span class="tab-icon">💰</span><span>إيرادات</span></button>
             <button class="tab" data-tab="expense"><span class="tab-icon">💸</span><span>مصروفات</span></button>
             <button class="tab" data-tab="reports"><span class="tab-icon">📈</span><span>تقارير</span></button>
-            <button class="tab" data-tab="documents"><span class="tab-icon">📄</span><span>مستندات</span></button>
         </div>
-        <div class="ad-banner-bottom">⚡ إعلانات AdMob - معرف التطبيق: ca-app-pub-7652843414407661~8783268338</div>
+        <div class="ad-banner-bottom">إدارة أسطول سيارات الأجرة الذكي - Taxi Man</div>
         <div id="toastMsg" class="toast"></div>
     </div>
 </div>
-
 <script>
+    // === 1. المتغيرات وبيانات التطبيق ===
     let currentUser = null;
     let appData = { cars: [], drivers: [], incomes: [], expenses: [] };
 
-    function showToast(msg, duration = 2000) {
+    // === 2. دوال مساعدة ===
+    function showToast(msg, duration = 2500) {
         let toast = document.getElementById('toastMsg');
-        if (toast) {
-            toast.innerText = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), duration);
-        } else {
-            alert(msg);
-        }
+        toast.innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), duration);
     }
 
     function saveDataToLocal() {
         if (currentUser) {
-            localStorage.setItem(`taxi_${currentUser.email}`, JSON.stringify({
-                cars: appData.cars,
-                drivers: appData.drivers,
-                incomes: appData.incomes,
-                expenses: appData.expenses
-            }));
+            localStorage.setItem(`taxi_data_${currentUser.email}`, JSON.stringify(appData));
         }
     }
 
     function loadUserData() {
         if (!currentUser) return;
-        let raw = localStorage.getItem(`taxi_${currentUser.email}`);
+        let raw = localStorage.getItem(`taxi_data_${currentUser.email}`);
         if (raw) {
-            let data = JSON.parse(raw);
-            appData.cars = data.cars || [];
-            appData.drivers = data.drivers || [];
-            appData.incomes = data.incomes || [];
-            appData.expenses = data.expenses || [];
+            appData = JSON.parse(raw);
         } else {
-            appData.cars = [];
-            appData.drivers = [];
-            appData.incomes = [];
-            appData.expenses = [];
+            appData = { cars: [], drivers: [], incomes: [], expenses: [] };
+            
+            // بيانات تجريبية إذا كان الحساب هو حساب التجربة
             if (currentUser.email === 'test@taxi.com') {
-                appData.cars.push({ id: 1001, name: 'طاكسي المدينة', auth: '1234/T', type: 'small', lastKm: 12500, initialKm: 12000, licenseExpiry: '2025-12-31' });
-                appData.cars.push({ id: 1002, name: 'طاكسي المطار', auth: '5678/M', type: 'big', lastKm: 8750, initialKm: 8500, licenseExpiry: '2025-06-15' });
-                appData.drivers.push({ id: 2001, name: 'أحمد علي', phone: '0612345678', cin: 'AB123456', license: 'L12345', licenseExpiry: '2026-01-20', notes: 'سائق محترف' });
-                appData.incomes.push({ id: 3001, carId: 1001, driverId: 2001, date: new Date().toISOString().slice(0,10), currentKm: 12650, diffKm: 150, amount: 375, extra: 0, manualMode: false });
-                appData.expenses.push({ id: 4001, carId: 1001, date: new Date().toISOString().slice(0,10), category: 'بنزين', amount: 120, note: 'تعبئة كاملة' });
+                appData.cars.push({ id: Date.now(), name: 'طاكسي كبير 1', auth: 'A123', type: 'big', km: 150000, expiry: '2026-01-01' });
+                appData.drivers.push({ id: Date.now() + 1, name: 'سعيد العلوية', phone: '0600000000', cin: 'AB12345', license: '12345678', expiry: '2027-05-20' });
                 saveDataToLocal();
             }
         }
     }
 
+    function generateId() {
+        return Date.now() + Math.floor(Math.random() * 100);
+    }
+
+    function getTodayDate() {
+        return new Date().toISOString().split('T')[0];
+    }
+
+    // === 3. نظام المصادقة (دخول/تسجيل) ===
     function toggleAuth(type) {
-        let loginForm = document.getElementById('login-form');
-        let registerForm = document.getElementById('register-form');
-        if (loginForm && registerForm) {
-            loginForm.style.display = type === 'login' ? 'block' : 'none';
-            registerForm.style.display = type === 'register' ? 'block' : 'none';
-            let loginTab = document.getElementById('btn-login-tab');
-            let registerTab = document.getElementById('btn-register-tab');
-            if (loginTab && registerTab) {
-                if (type === 'login') {
-                    loginTab.classList.add('active');
-                    registerTab.classList.remove('active');
-                } else {
-                    registerTab.classList.add('active');
-                    loginTab.classList.remove('active');
-                }
-            }
-        }
+        document.getElementById('login-form').style.display = type === 'login' ? 'block' : 'none';
+        document.getElementById('register-form').style.display = type === 'register' ? 'block' : 'none';
+        
+        document.getElementById('btn-login-tab').className = type === 'login' ? 'active' : '';
+        document.getElementById('btn-register-tab').className = type === 'register' ? 'active' : '';
     }
 
     function login(email, password) {
         let users = JSON.parse(localStorage.getItem('taxi_users') || '[]');
         let user = users.find(u => u.email === email && u.password === password);
+        
         if (user) {
             currentUser = user;
-            localStorage.setItem('taxi_current', JSON.stringify(user));
-            loadUserData();
-            renderMainApp();
-            showToast(`مرحباً ${user.name}`);
-            return true;
+            localStorage.setItem('taxi_current_session', JSON.stringify(user));
+            initializeApp();
         } else {
-            showToast('البريد الإلكتروني أو كلمة المرور غير صحيحة');
-            return false;
+            showToast('البيانات غير صحيحة!');
         }
     }
 
     function register(name, email, password, confirm) {
-        if (!name || !email || !password) {
-            showToast('املأ جميع الحقول');
-            return false;
-        }
-        if (password !== confirm) {
-            showToast('كلمة المرور غير متطابقة');
-            return false;
-        }
+        if (!name || !email || !password) return showToast('يرجى ملء جميع الحقول');
+        if (password !== confirm) return showToast('كلمتا المرور غير متطابقتين');
+        
         let users = JSON.parse(localStorage.getItem('taxi_users') || '[]');
-        if (users.find(u => u.email === email)) {
-            showToast('البريد موجود مسبقاً');
-            return false;
-        }
+        if (users.find(u => u.email === email)) return showToast('البريد الإلكتروني مسجل مسبقاً');
+        
         users.push({ name, email, password });
         localStorage.setItem('taxi_users', JSON.stringify(users));
-        showToast('تم إنشاء الحساب، سجل دخول الآن');
-        toggleAuth('login');
-        let loginEmail = document.getElementById('login-email');
-        let loginPassword = document.getElementById('login-password');
-        if (loginEmail && loginPassword) {
-            loginEmail.value = email;
-            l
+        showToast('تم إنشاء الحساب بنجاح! جاري الدخول...');
+        
+        document.getElementById('login-email').value = email;
+        document.getElementById('login-password').value = password;
+        login(email, password);
+    }
+
+    function logout() {
+        currentUser = null;
+        localStorage.removeItem('taxi_current_session');
+        document.getElementById('page-main').classList.remove('active');
+        document.getElementById('page-login').classList.add('active');
+    }
+
+    // === 4. واجهة المستخدم والتنقل ===
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(`tab-${tabId}`).style.display = 'block';
+        document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+        
+        // تحديث القوائم عند فتح التبويبات
+        if (tabId === 'income' || tabId === 'expense' || tabId === 'reports') {
+            updateSelectDropdowns();
+        }
+        if (tabId === 'income') document.getElementById('income-date').value = getTodayDate();
+        if (tabId === 'expense') document.getElementById('expense-date').value = getTodayDate();
+    }
+
+    function initializeApp() {
+        loadUserData();
+        document.getElementById('page-login').classList.remove('active');
+        document.getElementById('page-main').classList.add('active');
+        document.getElementById('user-name').innerText = `مرحباً، ${currentUser.name.split(' ')[0]}`;
+        
+        renderCars();
+        renderDrivers();
+        renderIncomes();
+        renderExpenses();
+        switchTab('cars');
+    }
+
+    // === 5. إدارة السيارات ===
+    function toggleCarForm(show) {
+        document.getElementById('cars-main-view').style.display = show ? 'none' : 'block';
+        document.getElementById('add-car-form').style.display = show ? 'block' : 'none';
+        if(show) {
+            document.getElementById('car-name').value = '';
+            document.getElementById('car-auth').value = '';
+            document.getElementById('car-km').value = '0';
+            document.getElementById('car-license-expiry').value = '';
+        }
+    }
+
+    function saveCar() {
+        let name = document.getElementById('car-name').value;
+        let auth = document.getElementById('car-auth').value;
+        let expiry = document.getElementById('car-license-expiry').value;
+        let type = document.getElementById('car-type').value;
+        let km = document.getElementById('car-km').value;
+
+        if (!name || !auth) return showToast('أدخل اسم السيارة ورقم المأذونية');
+
+        appData.cars.push({ id: generateId(), name, auth, expiry, type, km: parseInt(km) });
+        saveDataToLocal();
+        showToast('تم حفظ السيارة بنجاح');
+        toggleCarForm(false);
+        renderCars();
+    }
+
+    function renderCars() {
+        let list = document.getElementById('cars-list');
+        list.innerHTML = '';
+        if (appData.cars.length === 0) {
+            list.innerHTML = '<div class="empty-msg" style="grid-column: span 2;">لا توجد سيارات مسجلة بعد</div>';
+            return;
+        }
+        
+        appData.cars.forEach(car => {
+            let icon = car.type === 'small' ? '🚕' : '🚐';
+            list.innerHTML += `
+                <div class="car-card">
+                    <div class="car-type-icon">${icon}</div>
+                    <div class="car-name">${car.name}</div>
+                    <div class="car-auth">مأذونية: ${car.auth}</div>
+                    <div style="font-size: 0.7rem; color: #64748b; margin-top:5px;">عداد: ${car.km} كم</div>
+                </div>
+            `;
+        });
+    }
+
+    // === 6. إدارة السائقين ===
+    function toggleDriverForm(show) {
+        document.getElementById('drivers-main-view').style.display = show ? 'none' : 'block';
+        document.getElementById('add-driver-form').style.display = show ? 'block' : 'none';
+        if(show) {
+            document.getElementById('driver-name').value = '';
+            document.getElementById('driver-phone').value = '';
+            document.getElementById('driver-cin').value = '';
+            document.getElementById('driver-license').value = '';
+            document.getElementById('driver-license-expiry').value = '';
+        }
+    }
+
+    function saveDriver() {
+        let name = document.getElementById('driver-name').value;
+        let phone = document.getElementById('driver-phone').value;
+        let cin = document.getElementById('driver-cin').value;
+        let license = document.getElementById('driver-license').value;
+        let expiry = document.getElementById('driver-license-expiry').value;
+
+        if (!name) return showToast('أدخل اسم السائق على الأقل');
+
+        appData.drivers.push({ id: generateId(), name, phone, cin, license, expiry });
+        saveDataToLocal();
+        showToast('تم تسجيل السائق بنجاح');
+        toggleDriverForm(false);
+        renderDrivers();
+    }
+
+    function renderDrivers() {
+        let list = document.getElementById('drivers-list');
+        list.innerHTML = '';
+        if (appData.drivers.length === 0) {
+            list.innerHTML = '<div class="empty-msg">لا يوجد سائقين مسجلين</div>';
+            return;
+        }
+
+        appData.drivers.forEach(driver => {
+            list.innerHTML += `
+                <div class="driver-card">
+                    <div style="font-weight: 800; color:#0f172a; margin-bottom:4px;">${driver.name}</div>
+                    <div style="font-size: 0.8rem; color:#475569;">📱 ${driver.phone || 'غير محدد'} | 🪪 CIN: ${driver.cin || '-'}</div>
+                </div>
+            `;
+        });
+    }
+
+    // === 7. القوائم المنسدلة (Selects) ===
+    function updateSelectDropdowns() {
+        // سيارات
+        let carOpts = appData.cars.map(c => `<option value="${c.id}">${c.name} (${c.type === 'small'?'صغير':'كبير'})</option>`).join('');
+        document.getElementById('income-car-id').innerHTML = carOpts || '<option value="">لا توجد سيارات</option>';
+        document.getElementById('expense-car-id').innerHTML = carOpts || '<option value="">لا توجد سيارات</option>';
+        document.getElementById('report-car-select').innerHTML = '<option value="all">جميع السيارات</option>' + carOpts;
+
+        // سائقين
+        let driverOpts = '<option value="">بدون سائق محدد</option>' + appData.drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+        document.getElementById('income-driver-id').innerHTML = driverOpts;
+    }
+
+    // === 8. إدارة الإيرادات ===
+    function addIncome() {
+        let carId = document.getElementById('income-car-id').value;
+        let driverId = document.getElementById('income-driver-id').value;
+        let date = document.getElementById('income-date').value;
+        let amount = document.getElementById('total-manual').value;
+
+        if (!carId || !amount) return showToast('الرجاء اختيار السيارة وإدخال المبلغ');
+
+        appData.incomes.push({
+            id: generateId(),
+            carId: parseInt(carId),
+            driverId: driverId ? parseInt(driverId) : null,
+            date,
+            amount: parseFloat(amount)
+        });
+
+        saveDataToLocal();
+        showToast('تم تسجيل الإيراد بنجاح');
+        document.getElementById('total-manual').value = '';
+        renderIncomes();
+    }
+
+    function renderIncomes() {
+        let list = document.getElementById('incomes-list');
+        list.innerHTML = '';
+        let recent = appData.incomes.slice(-5).reverse(); // آخر 5 فقط
+        
+        if (recent.length === 0) {
+            list.innerHTML = '<div class="empty-msg">لم يتم تسجيل إيرادات بعد</div>';
+            return;
+        }
+
+        recent.forEach(inc => {
+            let car = appData.cars.find(c => c.id === inc.carId)?.name || 'سيارة محذوفة';
+            list.innerHTML += `
+                <div class="item-row">
+                    <div>
+                        <div style="font-weight:bold; color:#10b981;">+ ${inc.amount} درهم</div>
+                        <div style="font-size:0.75rem; color:#64748b;">${car} | ${inc.date}</div>
+                    </div>
+                    <button class="btn-del" onclick="deleteRecord('income', ${inc.id})">حذف</button>
+                </div>
+            `;
+        });
+    }
+
+    // === 9. إدارة المصروفات ===
+    function addExpense() {
+        let carId = document.getElementById('expense-car-id').value;
+        let date = document.getElementById('expense-date').value;
+        let cat = document.getElementById('expense-cat').value;
+        let amount = document.getElementById('expense-amount').value;
+        let note = document.getElementById('expense-note').value;
+
+        if (!carId || !amount) return showToast('الرجاء اختيار السيارة وإدخال المبلغ');
+
+        appData.expenses.push({
+            id: generateId(),
+            carId: parseInt(carId),
+            date,
+            cat,
+            amount: parseFloat(amount),
+            note
+        });
+
+        saveDataToLocal();
+        showToast('تم تسجيل المصروف بنجاح');
+        document.getElementById('expense-amount').value = '';
+        document.getElementById('expense-note').value = '';
+        renderExpenses();
+    }
+
+    function renderExpenses() {
+        let list = document.getElementById('expenses-list');
+        list.innerHTML = '';
+        let recent = appData.expenses.slice(-5).reverse();
+        
+        if (recent.length === 0) {
+            list.innerHTML = '<div class="empty-msg">لم يتم تسجيل مصروفات بعد</div>';
+            return;
+        }
+
+        recent.forEach(exp => {
+            let car = appData.cars.find(c => c.id === exp.carId)?.name || 'سيارة محذوفة';
+            list.innerHTML += `
+                <div class="item-row">
+                    <div>
+                        <div style="font-weight:bold; color:#ef4444;">- ${exp.amount} درهم (${exp.cat})</div>
+                        <div style="font-size:0.75rem; color:#64748b;">${car} | ${exp.date} ${exp.note ? ' - '+exp.note : ''}</div>
+                    </div>
+                    <button class="btn-del" onclick="deleteRecord('expense', ${exp.id})">حذف</button>
+                </div>
+            `;
+        });
+    }
+
+    // === 10. الحذف العام ===
+    window.deleteRecord = function(type, id) {
+        if(confirm('هل أنت متأكد من الحذف؟')) {
+            if(type === 'income') {
+                appData.incomes = appData.incomes.filter(i => i.id !== id);
+                renderIncomes();
+            } else if (type === 'expense') {
+                appData.expenses = appData.expenses.filter(e => e.id !== id);
+                renderExpenses();
+            }
+            saveDataToLocal();
+            showToast('تم الحذف بنجاح');
+        }
+    }
+
+    // === 11. التقارير ===
+    function generateReport() {
+        let carId = document.getElementById('report-car-select').value;
+        let month = document.getElementById('report-month').value; // format: YYYY-MM
+        
+        if (!month) return showToast('يرجى تحديد الشهر');
+
+        let filteredIncomes = appData.incomes.filter(i => i.date.startsWith(month));
+        let filteredExpenses = appData.expenses.filter(e => e.date.startsWith(month));
+
+        if (carId !== 'all') {
+            filteredIncomes = filteredIncomes.filter(i => i.carId === parseInt(carId));
+            filteredExpenses = filteredExpenses.filter(e => e.carId === parseInt(carId));
+        }
+
+        let totalIncome = filteredIncomes.reduce((sum, item) => sum + item.amount, 0);
+        let totalExpense = filteredExpenses.reduce((sum, item) => sum + item.amount, 0);
+        let netProfit = totalIncome - totalExpense;
+
+        document.getElementById('report-total-income').innerText = totalIncome;
+        document.getElementById('report-total-expense').innerText = totalExpense;
+        document.getElementById('report-net-profit').innerText = netProfit;
+        
+        let carName = carId === 'all' ? 'جميع السيارات' : (appData.cars.find(c => c.id == carId)?.name || '');
+        document.getElementById('report-title').innerText = `تقرير ${month} - ${carName}`;
+        
+        document.getElementById('report-result').style.display = 'block';
+    }
+
+
+    // === 12. تهيئة الأحداث (Event Listeners) عند تحميل الصفحة ===
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // التحقق من الجلسة المفتوحة
+        let session = localStorage.getItem('taxi_current_session');
+        if(session) {
+            currentUser = JSON.parse(session);
+            initializeApp();
+        } else {
+            // تعيين التاريخ الافتراضي في الفورم
+            let d = new Date();
+            let currentMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+            document.getElementById('report-month').value = currentMonth;
+        }
+
+        // أزرار الدخول والتسجيل
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            login(document.getElementById('login-email').value, document.getElementById('login-password').value);
+        });
+
+        document.getElementById('registerBtn').addEventListener('click', () => {
+            register(
+                document.getElementById('reg-name').value,
+                document.getElementById('reg-email').value,
+                document.getElementById('reg-password').value,
+                document.getElementById('reg-confirm').value
+            );
+        });
+
+        document.getElementById('testBtn').addEventListener('click', () => {
+            let users = JSON.parse(localStorage.getItem('taxi_users') || '[]');
+            if (!users.find(u => u.email === 'test@taxi.com')) {
+                users.push({ name: 'حساب تجريبي', email: 'test@taxi.com', password: '123' });
+                localStorage.setItem('taxi_users', JSON.stringify(users));
+            }
+            login('test@taxi.com', '123');
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        // أزرار القائمة السفلية
+        document.querySelectorAll('.tab').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                let target = btn.getAttribute('data-tab');
+                switchTab(target);
+            });
+        });
+
+        // أحداث السيارات
+        document.getElementById('showAddCarBtn').addEventListener('click', () => toggleCarForm(true));
+        document.getElementById('cancelCarBtn').addEventListener('click', () => toggleCarForm(false));
+        document.getElementById('saveCarBtn').addEventListener('click', saveCar);
+
+        // أحداث السائقين
+        document.getElementById('showAddDriverBtn').addEventListener('click', () => toggleDriverForm(true));
+        document.getElementById('cancelDriverBtn').addEventListener('click', () => toggleDriverForm(false));
+        document.getElementById('saveDriverBtn').addEventListener('click', saveDriver);
+
+        // أحداث الماليات
+        document.getElementById('addIncomeBtn').addEventListener('click', addIncome);
+        document.getElementById('addExpenseBtn').addEventListener('click', addExpense);
+        document.getElementById('generateReportBtn').addEventListener('click', generateReport);
+    });
+</script>
+</body>
+</html>
