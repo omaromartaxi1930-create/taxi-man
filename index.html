@@ -141,6 +141,7 @@
             .card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
         }
     </style>
+<base target="_blank">
 </head>
 <body>
     <div id="app">
@@ -518,7 +519,6 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        
 
         // ==================== DATA & STATE ====================
         let currentUser = null;
@@ -887,4 +887,321 @@
             document.getElementById('km-diff-display').style.display = diff > 0 ? 'block' : 'none';
             document.getElementById('km-diff').textContent = diff;
             document.getElementById('km-price-display').style.display = amount > 0 ? 'block' : 'none';
-            documen
+            document.getElementById('km-calculated').textContent = amount.toFixed(2);
+            document.getElementById('income-amount').value = amount > 0 ? amount.toFixed(2) : '';
+        }
+
+        function addIncome() {
+            const carId = document.getElementById('income-car').value;
+            const driverId = document.getElementById('income-driver').value;
+            const shift = document.getElementById('income-shift').value;
+            const date = document.getElementById('income-date').value || new Date().toISOString().split('T')[0];
+            const amount = parseFloat(document.getElementById('income-amount').value) || 0;
+            const notes = document.getElementById('income-notes').value.trim();
+            if (!carId) { showToast('❌ يرجى اختيار السيارة'); return; }
+            if (!driverId) { showToast('❌ يرجى اختيار السائق'); return; }
+            if (amount <= 0) { showToast('❌ يرجى إدخال مبلغ صحيح'); return; }
+
+            const car = cars.find(c => c.id == carId);
+            const income = {
+                id: Date.now(),
+                carId: parseInt(carId),
+                driverId: parseInt(driverId),
+                shift: shift,
+                date,
+                amount,
+                notes,
+                workMode: car.workMode,
+                createdAt: new Date().toISOString()
+            };
+
+            if (car.workMode === 'km') {
+                income.kmStart = parseFloat(document.getElementById('income-km-start').value) || 0;
+                income.kmEnd = parseFloat(document.getElementById('income-km-end').value) || 0;
+                income.kmPrice = parseFloat(document.getElementById('income-km-price').value) || 0;
+                income.kmDiff = income.kmEnd - income.kmStart;
+                car.lastKm = income.kmEnd;
+                localStorage.setItem('taxi_cars', JSON.stringify(cars));
+            } else {
+                income.rwsitaAmount = parseFloat(document.getElementById('income-rwsita-amount').value) || 0;
+                income.rwsitaNotes = document.getElementById('income-rwsita-notes').value.trim();
+            }
+
+            incomes.push(income);
+            localStorage.setItem('taxi_incomes', JSON.stringify(incomes));
+            renderIncome();
+            renderCars();
+            renderReports();
+            showToast('✅ تم تسجيل الإيراد بنجاح');
+
+            document.getElementById('income-km-end').value = '';
+            document.getElementById('income-amount').value = '';
+            document.getElementById('income-notes').value = '';
+            document.getElementById('income-rwsita-notes').value = '';
+            document.getElementById('km-diff-display').style.display = 'none';
+            document.getElementById('km-price-display').style.display = 'none';
+            onIncomeCarChange();
+        }
+
+        function renderIncome() {
+            const container = document.getElementById('income-list');
+            const sorted = [...incomes].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 20);
+            if (sorted.length === 0) { container.innerHTML = '<div class="empty-msg">لا توجد إيرادات مسجلة</div>'; return; }
+            container.innerHTML = sorted.map(i => {
+                const car = cars.find(c => c.id === i.carId);
+                const driver = drivers.find(d => d.id === i.driverId);
+                const modeBadge = i.workMode === 'km' ? '<span class="mode-badge km">كيلومتر</span>' : '<span class="mode-badge rwsita">روسيطة</span>';
+                const shiftBadge = `<span class="shift-badge ${shiftClass(i.shift)}">${shiftLabel(i.shift)}</span>`;
+                const detail = i.workMode === 'km' 
+                    ? `📊 ${i.kmDiff || 0} كم × ${i.kmPrice || 0}د` 
+                    : `💰 رسيطة ${i.rwsitaAmount || 0}د`;
+                return `<div class="item-row">
+                    <div class="item-info">
+                        <div>${modeBadge} ${shiftBadge} 🚗 ${car ? car.name : '---'} 👤 ${driver ? driver.name : '---'}</div>
+                        <div class="item-date">📅 ${i.date} | ${detail}</div>
+                        ${i.notes ? `<div style="font-size:0.75rem;color:#64748b;">📝 ${i.notes}</div>` : ''}
+                    </div>
+                    <div class="item-amount" style="color:#10b981;">+${i.amount}د</div>
+                    <button class="delete-btn" onclick="deleteIncome(${i.id})">🗑️</button>
+                </div>`;
+            }).join('');
+        }
+
+        function deleteIncome(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا الإيراد؟')) return;
+            incomes = incomes.filter(i => i.id !== id);
+            localStorage.setItem('taxi_incomes', JSON.stringify(incomes));
+            renderIncome();
+            renderReports();
+            showToast('🗑️ تم حذف الإيراد');
+        }
+
+        // ==================== EXPENSES ====================
+        function addExpense() {
+            const carId = document.getElementById('expense-car').value;
+            const date = document.getElementById('expense-date').value || new Date().toISOString().split('T')[0];
+            const type = document.getElementById('expense-type').value;
+            const amount = parseFloat(document.getElementById('expense-amount').value) || 0;
+            const notes = document.getElementById('expense-notes').value.trim();
+            if (!carId) { showToast('❌ يرجى اختيار السيارة'); return; }
+            if (amount <= 0) { showToast('❌ يرجى إدخال مبلغ صحيح'); return; }
+            const expense = { id: Date.now(), carId: parseInt(carId), date, type, amount, notes, createdAt: new Date().toISOString() };
+            expenses.push(expense);
+            localStorage.setItem('taxi_expenses', JSON.stringify(expenses));
+            renderExpenses();
+            renderReports();
+            showToast('✅ تم تسجيل المصروف');
+            document.getElementById('expense-amount').value = '';
+            document.getElementById('expense-notes').value = '';
+        }
+
+        function renderExpenses() {
+            const container = document.getElementById('expense-list');
+            const sorted = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 20);
+            if (sorted.length === 0) { container.innerHTML = '<div class="empty-msg">لا توجد مصاريف مسجلة</div>'; return; }
+            const typeLabels = { fuel: '⛽ وقود', repair: '🔧 إصلاح', insurance: '🛡️ تأمين', tax: '📋 جباية', washing: '🧼 غسيل', other: '📦 أخرى' };
+            container.innerHTML = sorted.map(e => {
+                const car = cars.find(c => c.id === e.carId);
+                return `<div class="item-row">
+                    <div class="item-info">
+                        <div>🚗 ${car ? car.name : '---'} | ${typeLabels[e.type] || e.type}</div>
+                        <div class="item-date">📅 ${e.date}</div>
+                        ${e.notes ? `<div style="font-size:0.75rem;color:#64748b;">📝 ${e.notes}</div>` : ''}
+                    </div>
+                    <div class="item-amount" style="color:#ef4444;">-${e.amount}د</div>
+                    <button class="delete-btn" onclick="deleteExpense(${e.id})">🗑️</button>
+                </div>`;
+            }).join('');
+        }
+
+        function deleteExpense(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا المصروف؟')) return;
+            expenses = expenses.filter(e => e.id !== id);
+            localStorage.setItem('taxi_expenses', JSON.stringify(expenses));
+            renderExpenses();
+            renderReports();
+            showToast('🗑️ تم حذف المصروف');
+        }
+
+        // ==================== DOCUMENTS ====================
+        function renderDocuments() {
+            const carContainer = document.getElementById('docs-car-list');
+            const driverContainer = document.getElementById('docs-driver-list');
+
+            if (cars.length === 0) { carContainer.innerHTML = '<div class="empty-msg">لا توجد سيارات</div>'; }
+            else {
+                carContainer.innerHTML = cars.map(c => {
+                    const carDrivers = (c.driverIds || []).map(id => {
+                        const d = drivers.find(drv => drv.id === id);
+                        return d ? d.name : '---';
+                    }).join('، ');
+                    return `<div class="doc-card">
+                        <div class="doc-header">
+                            <span class="doc-type">🚗 ${c.name}</span>
+                            <span class="doc-status valid">نشط</span>
+                        </div>
+                        <div class="doc-details">📋 مأذونية: ${c.auth || 'غير مسجلة'}</div>
+                        <div class="doc-details">⚙️ نظام العمل: ${c.workMode === 'km' ? 'بالكيلومتر' : 'بالروسيطة ' + (c.rwsitaAmount || 0) + 'د (' + periodLabel(c.rwsitaPeriod) + ')'}</div>
+                        ${carDrivers ? `<div class="doc-details">👤 السائقين: ${carDrivers}</div>` : ''}
+                    </div>`;
+                }).join('');
+            }
+
+            if (drivers.length === 0) { driverContainer.innerHTML = '<div class="empty-msg">لا يوجد سائقين</div>'; }
+            else {
+                driverContainer.innerHTML = drivers.map(d => {
+                    const daysLeft = d.licenseExpiry ? Math.ceil((new Date(d.licenseExpiry) - new Date()) / (1000*60*60*24)) : null;
+                    let cardClass = '';
+                    let statusClass = 'valid';
+                    let statusText = 'سارية';
+                    if (daysLeft !== null && daysLeft <= 0) { cardClass = 'danger'; statusClass = 'danger'; statusText = 'منتهية!'; }
+                    else if (daysLeft !== null && daysLeft <= 30) { cardClass = 'warning'; statusClass = 'warning'; statusText = 'تنتهي قريباً'; }
+                    const assignedCars = cars.filter(c => c.driverIds && c.driverIds.includes(d.id)).map(c => c.name).join('، ');
+                    return `<div class="doc-card ${cardClass}">
+                        <div class="doc-header">
+                            <span class="doc-type">👤 ${d.name}</span>
+                            <span class="doc-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="doc-details">📜 رخصة: ${d.license || '---'}</div>
+                        ${d.licenseExpiry ? `<div class="doc-details">📅 تنتهي: ${d.licenseExpiry}</div><div class="doc-days ${daysLeft <= 0 ? 'danger' : daysLeft <= 30 ? 'warning' : 'safe'}">⏰ ${daysLeft > 0 ? daysLeft + ' يوم متبقي' : 'منتهية من ' + Math.abs(daysLeft) + ' يوم'}</div>` : '<div class="doc-details">📅 لا يوجد تاريخ انتهاء</div>'}
+                        ${assignedCars ? `<div class="doc-details">🚗 السيارات: ${assignedCars}</div>` : ''}
+                    </div>`;
+                }).join('');
+            }
+        }
+
+        // ==================== REPORTS ====================
+        function renderReports() {
+            const totalIncome = incomes.reduce((sum, i) => sum + i.amount, 0);
+            const totalExpense = expenses.reduce((sum, e) => sum + e.amount, 0);
+            const profit = totalIncome - totalExpense;
+            document.getElementById('total-income').textContent = totalIncome.toFixed(0) + 'د';
+            document.getElementById('total-expense').textContent = totalExpense.toFixed(0) + 'د';
+            document.getElementById('total-profit').textContent = profit.toFixed(0) + 'د';
+            document.getElementById('total-cars').textContent = cars.length;
+
+            // Monthly reports
+            const months = {};
+            incomes.forEach(i => {
+                const month = i.date.substring(0, 7);
+                if (!months[month]) months[month] = { income: 0, expense: 0, km: 0, rwsita: 0 };
+                months[month].income += i.amount;
+                if (i.workMode === 'km') months[month].km += i.amount;
+                else months[month].rwsita += i.amount;
+            });
+            expenses.forEach(e => {
+                const month = e.date.substring(0, 7);
+                if (!months[month]) months[month] = { income: 0, expense: 0, km: 0, rwsita: 0 };
+                months[month].expense += e.amount;
+            });
+
+            const sortedMonths = Object.keys(months).sort().reverse();
+            const reportsContainer = document.getElementById('reports-list');
+            if (sortedMonths.length === 0) { reportsContainer.innerHTML = '<div class="empty-msg">لا توجد بيانات كافية</div>'; }
+            else {
+                reportsContainer.innerHTML = sortedMonths.map(m => {
+                    const data = months[m];
+                    const profit = data.income - data.expense;
+                    const [year, monthNum] = m.split('-');
+                    const monthNames = ['يناير','فبراير','مارس','أبريل','ماي','يونيو','يوليوز','غشت','شتنبر','أكتوبر','نونبر','دجنبر'];
+                    return `<div class="report-month">
+                        <div class="report-month-title">📅 ${monthNames[parseInt(monthNum)-1]} ${year}</div>
+                        <div class="report-row">
+                            <span class="report-label">💰 إيرادات الكيلومتر</span>
+                            <span class="report-value income">${data.km.toFixed(0)}د</span>
+                        </div>
+                        <div class="report-row">
+                            <span class="report-label">💰 إيرادات الروسيطة</span>
+                            <span class="report-value income">${data.rwsita.toFixed(0)}د</span>
+                        </div>
+                        <div class="report-row">
+                            <span class="report-label">💸 المصاريف</span>
+                            <span class="report-value expense">${data.expense.toFixed(0)}د</span>
+                        </div>
+                        <div class="report-row total">
+                            <span class="report-label">📊 صافي الربح</span>
+                            <span class="report-value profit">${profit.toFixed(0)}د</span>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            // Car profits
+            const carProfits = {};
+            cars.forEach(c => carProfits[c.id] = { name: c.name, income: 0, expense: 0, mode: c.workMode });
+            incomes.forEach(i => { if (carProfits[i.carId]) carProfits[i.carId].income += i.amount; });
+            expenses.forEach(e => { if (carProfits[e.carId]) carProfits[e.carId].expense += e.amount; });
+            const carList = Object.values(carProfits);
+            const carContainer = document.getElementById('car-profits-list');
+            if (carList.length === 0) { carContainer.innerHTML = '<div class="empty-msg">لا توجد سيارات</div>'; }
+            else {
+                carContainer.innerHTML = carList.map(c => {
+                    const profit = c.income - c.expense;
+                    const modeBadge = c.mode === 'km' ? '<span class="mode-badge km">كيلومتر</span>' : '<span class="mode-badge rwsita">روسيطة</span>';
+                    return `<div class="report-month">
+                        <div class="report-month-title">🚗 ${c.name} ${modeBadge}</div>
+                        <div class="report-row">
+                            <span class="report-label">💰 الإيرادات</span>
+                            <span class="report-value income">${c.income.toFixed(0)}د</span>
+                        </div>
+                        <div class="report-row">
+                            <span class="report-label">💸 المصاريف</span>
+                            <span class="report-value expense">${c.expense.toFixed(0)}د</span>
+                        </div>
+                        <div class="report-row total">
+                            <span class="report-label">📊 الربح الصافي</span>
+                            <span class="report-value ${profit >= 0 ? 'profit' : 'expense'}">${profit.toFixed(0)}د</span>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            // Driver profits
+            const driverProfits = {};
+            drivers.forEach(d => driverProfits[d.id] = { name: d.name, income: 0, shifts: { full: 0, morning: 0, evening: 0, night: 0 } });
+            incomes.forEach(i => {
+                if (driverProfits[i.driverId]) {
+                    driverProfits[i.driverId].income += i.amount;
+                    if (i.shift) driverProfits[i.driverId].shifts[i.shift]++;
+                }
+            });
+            const driverList = Object.values(driverProfits).filter(d => d.income > 0);
+            const driverContainer = document.getElementById('driver-profits-list');
+            if (driverList.length === 0) { driverContainer.innerHTML = '<div class="empty-msg">لا توجد إيرادات مسجلة للسائقين</div>'; }
+            else {
+                driverContainer.innerHTML = driverList.map(d => {
+                    const shiftInfo = [];
+                    if (d.shifts.full > 0) shiftInfo.push(`☀️🌙 ${d.shifts.full} يوم كامل`);
+                    if (d.shifts.morning > 0) shiftInfo.push(`☀️ ${d.shifts.morning} صباح`);
+                    if (d.shifts.evening > 0) shiftInfo.push(`🌙 ${d.shifts.evening} مساء`);
+                    if (d.shifts.night > 0) shiftInfo.push(`🌃 ${d.shifts.night} ليل`);
+                    return `<div class="driver-profit-card">
+                        <div class="driver-profit-name">👤 ${d.name}</div>
+                        <div class="driver-profit-detail">${shiftInfo.join(' | ')}</div>
+                        <div class="driver-profit-amount">💰 ${d.income.toFixed(0)} درهم</div>
+                    </div>`;
+                }).join('');
+            }
+        }
+
+        // ==================== UTILS ====================
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('taxi_current_user');
+            if (saved) {
+                currentUser = JSON.parse(saved);
+                showMain();
+            }
+            document.getElementById('income-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('expense-date').value = new Date().toISOString().split('T')[0];
+        });
+    </script>
+</body>
+</html>
