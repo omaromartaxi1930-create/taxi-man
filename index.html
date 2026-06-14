@@ -217,3 +217,674 @@
                         <div class="input-group"><label>📋 رقم المأذونية</label><input type="text" id="car-auth" placeholder="مثال: 12345"></div>
                         <div class="input-group"><label>🚕 نوع الطاكسي</label>
                             <select id="car-type"><option value="small">🚕 صغير</option><option value="big">🚐 كبير</option></select>
+                        </div>
+
+                        <!-- نظام العمل -->
+                        <div class="section-title">⚙️ نظام العمل</div>
+                        <div class="toggle-mode">
+                            <button id="mode-km-btn" class="active" onclick="setCarMode('km')">
+                                <span class="mode-icon">📊</span>
+                                <span>بالكيلومتر</span>
+                            </button>
+                            <button id="mode-rwsita-btn" onclick="setCarMode('rwsita')">
+                                <span class="mode-icon">💰</span>
+                                <span>بالروسيطة</span>
+                            </button>
+                        </div>
+                        <input type="hidden" id="car-work-mode" value="km">
+
+                        <!-- حقول الكيلومتر -->
+                        <div id="km-fields">
+                            <div class="input-group"><label>📊 الكيلومتر الابتدائي</label><input type="number" id="car-km" placeholder="0" value="0"></div>
+                        </div>
+
+                        <!-- حقول الروسيطة -->
+                        <div id="rwsita-fields" style="display:none;">
+                            <div class="input-group"><label>💰 مبلغ الرسيطة</label><input type="number" id="car-rwsita-amount" placeholder="مثال: 500" value="0"></div>
+                            <div class="input-group"><label>🔄 دورة الرسيطة</label>
+                                <select id="car-rwsita-period">
+                                    <option value="daily">📅 يومي</option>
+                                    <option value="weekly">📆 أسبوعي</option>
+                                    <option value="monthly">🗓️ شهري</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- السائقين المرتبطين بالسيارة -->
+                        <div class="section-title">👤 سائقي السيارة (يمكن اختيار أكثر من سائق)</div>
+                        <div id="car-drivers-select" class="drivers-select-area"></div>
+                        <div id="selected-car-drivers" style="margin-bottom: 10px;"></div>
+                        <input type="hidden" id="car-driver-ids" value="">
+
+                        <button class="btn-primary" onclick="addCar()">💾 حفظ السيارة</button>
+                        <button class="btn-red" onclick="hideAddCar()">❌ إلغاء</button>
+                    </div>
+                </div>
+
+                <!-- السائقين -->
+                <div id="tab-drivers" class="tab-content" style="display:none;">
+                    <div class="admob-banner" data-admob-id="ca-app-pub-7652843414407661~8783268338">
+                        <span class="ad-label">إعلان</span>
+                        <span>AdMob Banner - ca-app-pub-7652843414407661~8783268338</span>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">👤 السائقين</div>
+                        <div id="drivers-list"></div>
+                        <button class="btn-green" onclick="showAddDriver()">➕ إضافة سائق جديد</button>
+                    </div>
+                    <div id="add-driver-form" class="card" style="display:none;">
+                        <div class="card-title">➕ سائق جديد</div>
+                        <div class="input-group"><label>👤 الاسم الكامل</label><input type="text" id="driver-name" placeholder="مثال: محمد أحمد"></div>
+                        <div class="compact-row">
+                            <div class="input-group compact"><label>📱 الهاتف</label><input type="tel" id="driver-phone" placeholder="06XXXXXXXX"></div>
+                            <div class="input-group compact"><label>🆔 رقم البطاقة (CIN)</label><input type="text" id="driver-cin" placeholder="AB123456"></div>
+                        </div>
+                        <div class="compact-row">
+                            <div class="input-group compact"><label>📜 رقم رخصة السياقة</label><input type="text" id="driver-license" placeholder="1234567"></div>
+                            <div class="input-group compact"><label>📅 تاريخ انتهاء الرخصة</label><input type="date" id="driver-license-expiry"></div>
+                        </div>
+                        <div class="input-group compact"><label>📝 ملاحظات</label><input type="text" id="driver-notes" placeholder="مثال: سائق دائم / نهار فقط"></div>
+                        <button class="btn-primary" onclick="addDriver()">💾 حفظ السائق</button>
+                        <button class="btn-red" onclick="hideAddDriver()">❌ إلغاء</button>
+                    </div>
+                </div>
+
+                <!-- الإيرادات -->
+                <div id="tab-income" class="tab-content" style="display:none;">
+                    <div class="admob-banner" data-admob-id="ca-app-pub-7652843414407661~8783268338">
+                        <span class="ad-label">إعلان</span>
+                        <span>AdMob Banner - ca-app-pub-7652843414407661~8783268338</span>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">💰 تسجيل إيرادات</div>
+                        <div class="input-group">
+                            <label>🚗 اختر السيارة</label>
+                            <select id="income-car" onchange="onIncomeCarChange()"></select>
+                        </div>
+                        <div class="input-group">
+                            <label>👤 السائق</label>
+                            <select id="income-driver"></select>
+                        </div>
+                        <div class="input-group">
+                            <label>🕐 نوع الوردية</label>
+                            <select id="income-shift">
+                                <option value="full">☀️🌙 يوم كامل</option>
+                                <option value="morning">☀️ صباح (نهار)</option>
+                                <option value="evening">🌙 مساء (ليل)</option>
+                                <option value="night">🌃 ليلة كاملة</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>📅 التاريخ</label>
+                            <input type="date" id="income-date">
+                        </div>
+
+                        <!-- واجهة الكيلومتر -->
+                        <div id="income-km-section">
+                            <div class="km-info">
+                                <div>آخر كيلومتر مسجل: <span class="last-km" id="last-km-display">0</span> كم</div>
+                            </div>
+                            <div class="input-group">
+                                <label>📊 كيلومتر البداية</label>
+                                <input type="number" id="income-km-start" placeholder="0">
+                            </div>
+                            <div class="input-group">
+                                <label>📊 كيلومتر النهاية</label>
+                                <input type="number" id="income-km-end" placeholder="0" oninput="calcKmIncome()">
+                            </div>
+                            <div class="km-diff" id="km-diff-display" style="display:none;">
+                                المسافة: <span id="km-diff">0</span> كم
+                            </div>
+                            <div class="input-group">
+                                <label>💵 سعر الكيلومتر (درهم)</label>
+                                <input type="number" id="income-km-price" placeholder="2.5" value="2.5" step="0.1" oninput="calcKmIncome()">
+                            </div>
+                            <div class="price-calc" id="km-price-display" style="display:none;">
+                                المبلغ المحسوب: <span id="km-calculated">0</span> درهم
+                            </div>
+                        </div>
+
+                        <!-- واجهة الروسيطة -->
+                        <div id="income-rwsita-section" style="display:none;">
+                            <div class="rwsita-info">
+                                <div>الرسيطة الثابتة: <span class="rwsita-amount" id="rwsita-amount-display">0</span> درهم</div>
+                                <div class="rwsita-period" id="rwsita-period-display">يومي</div>
+                            </div>
+                            <div class="input-group">
+                                <label>💰 مبلغ الرسيطة المدفوع (درهم)</label>
+                                <input type="number" id="income-rwsita-amount" placeholder="0">
+                            </div>
+                            <div class="input-group">
+                                <label>📝 ملاحظات (اختياري)</label>
+                                <input type="text" id="income-rwsita-notes" placeholder="مثال: نصف يوم / يوم كامل / سائق بديل">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>💰 المبلغ الإجمالي (درهم)</label>
+                            <input type="number" id="income-amount" placeholder="0">
+                        </div>
+                        <div class="input-group">
+                            <label>📝 ملاحظات عامة</label>
+                            <input type="text" id="income-notes" placeholder="ملاحظات إضافية">
+                        </div>
+                        <button class="btn-primary" onclick="addIncome()">💾 حفظ الإيراد</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">📋 آخر الإيرادات</div>
+                        <div id="income-list"></div>
+                    </div>
+                </div>
+
+                <!-- المصاريف -->
+                <div id="tab-expenses" class="tab-content" style="display:none;">
+                    <div class="admob-banner" data-admob-id="ca-app-pub-7652843414407661~8783268338">
+                        <span class="ad-label">إعلان</span>
+                        <span>AdMob Banner - ca-app-pub-7652843414407661~8783268338</span>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">💸 تسجيل مصروف</div>
+                        <div class="input-group">
+                            <label>🚗 السيارة</label>
+                            <select id="expense-car"></select>
+                        </div>
+                        <div class="input-group">
+                            <label>📅 التاريخ</label>
+                            <input type="date" id="expense-date">
+                        </div>
+                        <div class="input-group">
+                            <label>📂 نوع المصروف</label>
+                            <select id="expense-type">
+                                <option value="fuel">⛽ وقود</option>
+                                <option value="repair">🔧 إصلاح</option>
+                                <option value="insurance">🛡️ تأمين</option>
+                                <option value="tax">📋 جباية/ضرائب</option>
+                                <option value="washing">🧼 غسيل</option>
+                                <option value="other">📦 أخرى</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>💰 المبلغ (درهم)</label>
+                            <input type="number" id="expense-amount" placeholder="0">
+                        </div>
+                        <div class="input-group">
+                            <label>📝 ملاحظات</label>
+                            <input type="text" id="expense-notes" placeholder="وصف المصروف">
+                        </div>
+                        <button class="btn-primary" onclick="addExpense()">💾 حفظ المصروف</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">📋 المصاريف الأخيرة</div>
+                        <div id="expense-list"></div>
+                    </div>
+                </div>
+
+                <!-- الوثائق -->
+                <div id="tab-documents" class="tab-content" style="display:none;">
+                    <div class="admob-banner" data-admob-id="ca-app-pub-7652843414407661~8783268338">
+                        <span class="ad-label">إعلان</span>
+                        <span>AdMob Banner - ca-app-pub-7652843414407661~8783268338</span>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">📋 وثائق السيارات</div>
+                        <div id="docs-car-list"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">👤 وثائق السائقين</div>
+                        <div id="docs-driver-list"></div>
+                    </div>
+                </div>
+
+                <!-- التقارير -->
+                <div id="tab-reports" class="tab-content" style="display:none;">
+                    <div class="admob-banner" data-admob-id="ca-app-pub-7652843414407661~8783268338">
+                        <span class="ad-label">إعلان</span>
+                        <span>AdMob Banner - ca-app-pub-7652843414407661~8783268338</span>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">📊 ملخص سريع</div>
+                        <div class="stats-row">
+                            <div class="stat-card income">
+                                <h3 id="total-income">0</h3>
+                                <p>إجمالي الإيرادات</p>
+                            </div>
+                            <div class="stat-card expense">
+                                <h3 id="total-expense">0</h3>
+                                <p>إجمالي المصاريف</p>
+                            </div>
+                        </div>
+                        <div class="stats-row">
+                            <div class="stat-card profit">
+                                <h3 id="total-profit">0</h3>
+                                <p>صافي الربح</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3 id="total-cars">0</h3>
+                                <p>عدد السيارات</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">📈 التقارير الشهرية</div>
+                        <div id="reports-list"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">🚗 أرباح كل سيارة</div>
+                        <div id="car-profits-list"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">👤 أرباح كل سائق</div>
+                        <div id="driver-profits-list"></div>
+                    </div>
+                    <button class="btn-blue" onclick="window.print()">🖨️ طباعة التقرير</button>
+                </div>
+            </div>
+
+            <!-- التبويبات السفلية -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('cars')">
+                    <span class="tab-icon">🚗</span>
+                    <span>السيارات</span>
+                </button>
+                <button class="tab" onclick="switchTab('drivers')">
+                    <span class="tab-icon">👤</span>
+                    <span>السائقين</span>
+                </button>
+                <button class="tab" onclick="switchTab('income')">
+                    <span class="tab-icon">💰</span>
+                    <span>الإيرادات</span>
+                </button>
+                <button class="tab" onclick="switchTab('expenses')">
+                    <span class="tab-icon">💸</span>
+                    <span>المصاريف</span>
+                </button>
+                <button class="tab" onclick="switchTab('documents')">
+                    <span class="tab-icon">📋</span>
+                    <span>الوثائق</span>
+                </button>
+                <button class="tab" onclick="switchTab('reports')">
+                    <span class="tab-icon">📊</span>
+                    <span>التقارير</span>
+                </button>
+            </div>
+
+            <!-- إعلان سفلي -->
+            <div class="ad-banner">
+                <div>📢 AdMob Banner - ca-app-pub-7652843414407661~8783268338</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        
+
+        // ==================== DATA & STATE ====================
+        let currentUser = null;
+        let users = JSON.parse(localStorage.getItem('taxi_users')) || [];
+        let cars = JSON.parse(localStorage.getItem('taxi_cars')) || [];
+        let drivers = JSON.parse(localStorage.getItem('taxi_drivers')) || [];
+        let incomes = JSON.parse(localStorage.getItem('taxi_incomes')) || [];
+        let expenses = JSON.parse(localStorage.getItem('taxi_expenses')) || [];
+        let selectedCarDrivers = [];
+
+        // ==================== AUTH ====================
+        function toggleAuth(mode) {
+            document.getElementById('btn-login-tab').classList.toggle('active', mode === 'login');
+            document.getElementById('btn-register-tab').classList.toggle('active', mode === 'register');
+            document.getElementById('login-form').style.display = mode === 'login' ? 'block' : 'none';
+            document.getElementById('register-form').style.display = mode === 'register' ? 'block' : 'none';
+        }
+
+        function login() {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            const user = users.find(u => u.email === email && u.password === password);
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('taxi_current_user', JSON.stringify(user));
+                showMain();
+                showToast('✅ تم تسجيل الدخول بنجاح');
+            } else {
+                showToast('❌ البريد أو كلمة المرور غير صحيحة');
+            }
+        }
+
+        function register() {
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const confirm = document.getElementById('reg-confirm').value;
+            if (!name || !email || !password) { showToast('❌ يرجى ملء جميع الحقول'); return; }
+            if (password !== confirm) { showToast('❌ كلمتا المرور غير متطابقتين'); return; }
+            if (users.find(u => u.email === email)) { showToast('❌ البريد مستخدم بالفعل'); return; }
+            const user = { id: Date.now(), name, email, password };
+            users.push(user);
+            localStorage.setItem('taxi_users', JSON.stringify(users));
+            currentUser = user;
+            localStorage.setItem('taxi_current_user', JSON.stringify(user));
+            showMain();
+            showToast('✅ تم إنشاء الحساب بنجاح');
+        }
+
+        function createTestAccount() {
+            const user = { id: 999999, name: 'حساب تجريبي', email: 'test@test.com', password: '123456' };
+            if (!users.find(u => u.email === 'test@test.com')) {
+                users.push(user);
+                localStorage.setItem('taxi_users', JSON.stringify(users));
+            }
+            currentUser = user;
+            localStorage.setItem('taxi_current_user', JSON.stringify(user));
+            showMain();
+            showToast('🧪 تم تسجيل الدخول بحساب تجريبي');
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('taxi_current_user');
+            document.getElementById('page-login').classList.add('active');
+            document.getElementById('page-main').classList.remove('active');
+            showToast('👋 تم تسجيل الخروج');
+        }
+
+        function showMain() {
+            document.getElementById('page-login').classList.remove('active');
+            document.getElementById('page-main').classList.add('active');
+            document.getElementById('user-name').textContent = 'مرحباً ' + (currentUser ? currentUser.name : '');
+            renderCars();
+            renderDrivers();
+            updateCarSelects();
+            renderCarDriversSelect();
+            renderIncome();
+            renderExpenses();
+            renderDocuments();
+            renderReports();
+        }
+
+        // ==================== NAVIGATION ====================
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.getElementById('tab-' + tabId).style.display = 'block';
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            if (tabId === 'reports') renderReports();
+            if (tabId === 'documents') renderDocuments();
+            if (tabId === 'income') { updateCarSelects(); onIncomeCarChange(); }
+            if (tabId === 'cars') renderCarDriversSelect();
+        }
+
+        // ==================== CARS ====================
+        function setCarMode(mode) {
+            document.getElementById('car-work-mode').value = mode;
+            document.getElementById('mode-km-btn').classList.toggle('active', mode === 'km');
+            document.getElementById('mode-rwsita-btn').classList.toggle('active', mode === 'rwsita');
+            document.getElementById('km-fields').style.display = mode === 'km' ? 'block' : 'none';
+            document.getElementById('rwsita-fields').style.display = mode === 'rwsita' ? 'block' : 'none';
+        }
+
+        function showAddCar() { 
+            document.getElementById('add-car-form').style.display = 'block'; 
+            renderCarDriversSelect();
+        }
+        function hideAddCar() { 
+            document.getElementById('add-car-form').style.display = 'none'; 
+            selectedCarDrivers = [];
+            document.getElementById('selected-car-drivers').innerHTML = '';
+            document.getElementById('car-driver-ids').value = '';
+        }
+
+        function renderCarDriversSelect() {
+            const container = document.getElementById('car-drivers-select');
+            if (drivers.length === 0) {
+                container.innerHTML = '<div style="width:100%;text-align:center;color:#94a3b8;font-size:0.8rem;">لا يوجد سائقين. أضف سائقين أولاً.</div>';
+                return;
+            }
+            container.innerHTML = drivers.map(d => {
+                const isSelected = selectedCarDrivers.includes(d.id);
+                return `<div class="driver-chip ${isSelected ? 'selected' : ''}" onclick="toggleCarDriver(${d.id})">
+                    👤 ${d.name}
+                </div>`;
+            }).join('');
+        }
+
+        function toggleCarDriver(driverId) {
+            if (selectedCarDrivers.includes(driverId)) {
+                selectedCarDrivers = selectedCarDrivers.filter(id => id !== driverId);
+            } else {
+                selectedCarDrivers.push(driverId);
+            }
+            document.getElementById('car-driver-ids').value = selectedCarDrivers.join(',');
+            renderCarDriversSelect();
+            renderSelectedCarDrivers();
+        }
+
+        function renderSelectedCarDrivers() {
+            const container = document.getElementById('selected-car-drivers');
+            if (selectedCarDrivers.length === 0) {
+                container.innerHTML = '<div style="color:#94a3b8;font-size:0.8rem;">لم يتم اختيار أي سائق</div>';
+                return;
+            }
+            container.innerHTML = selectedCarDrivers.map(id => {
+                const d = drivers.find(drv => drv.id === id);
+                return `<span class="driver-chip selected">👤 ${d ? d.name : '---'} <button class="remove-chip" onclick="event.stopPropagation(); toggleCarDriver(${id})">×</button></span>`;
+            }).join('');
+        }
+
+        function addCar() {
+            const name = document.getElementById('car-name').value.trim();
+            const auth = document.getElementById('car-auth').value.trim();
+            const type = document.getElementById('car-type').value;
+            const mode = document.getElementById('car-work-mode').value;
+            const km = parseFloat(document.getElementById('car-km').value) || 0;
+            const rwsitaAmount = parseFloat(document.getElementById('car-rwsita-amount').value) || 0;
+            const rwsitaPeriod = document.getElementById('car-rwsita-period').value;
+            const driverIds = selectedCarDrivers;
+            if (!name) { showToast('❌ يرجى إدخال اسم السيارة'); return; }
+            const car = {
+                id: Date.now(),
+                name, auth, type,
+                workMode: mode,
+                initialKm: km,
+                lastKm: km,
+                rwsitaAmount: rwsitaAmount,
+                rwsitaPeriod: rwsitaPeriod,
+                driverIds: driverIds,
+                createdAt: new Date().toISOString()
+            };
+            cars.push(car);
+            localStorage.setItem('taxi_cars', JSON.stringify(cars));
+            renderCars();
+            updateCarSelects();
+            hideAddCar();
+            document.getElementById('car-name').value = '';
+            document.getElementById('car-auth').value = '';
+            document.getElementById('car-km').value = '0';
+            document.getElementById('car-rwsita-amount').value = '0';
+            showToast('✅ تم إضافة السيارة بنجاح');
+        }
+
+        function renderCars() {
+            const container = document.getElementById('cars-list');
+            if (cars.length === 0) { container.innerHTML = '<div class="empty-msg">لا توجد سيارات مسجلة</div>'; return; }
+            container.innerHTML = cars.map(car => {
+                const modeLabel = car.workMode === 'km' ? 'بالكيلومتر' : 'بالروسيطة';
+                const modeClass = car.workMode === 'km' ? 'km' : 'rwsita';
+                const extraInfo = car.workMode === 'km' 
+                    ? `آخر كم: ${car.lastKm || car.initialKm || 0}` 
+                    : `رسيطة: ${car.rwsitaAmount || 0}د (${periodLabel(car.rwsitaPeriod)})`;
+                const icon = car.type === 'big' ? '🚐' : '🚕';
+                const carDrivers = (car.driverIds || []).map(id => {
+                    const d = drivers.find(drv => drv.id === id);
+                    return d ? d.name : '---';
+                }).join('، ');
+                return `<div class="car-card" onclick="selectCar(${car.id})">
+                    <div class="car-type-icon">${icon}</div>
+                    <div class="car-type-label">${car.type === 'big' ? 'كبير' : 'صغير'}</div>
+                    <div class="car-name">${car.name}</div>
+                    <div class="car-auth">${car.auth || 'بدون مأذونية'}</div>
+                    <div class="car-mode ${modeClass}">${modeLabel}</div>
+                    <div class="car-stats">${extraInfo}</div>
+                    ${carDrivers ? `<div style="font-size:0.7rem;color:#64748b;margin-top:4px;">👤 ${carDrivers}</div>` : ''}
+                    <button class="btn-del" onclick="event.stopPropagation(); deleteCar(${car.id})" style="margin-top:8px;width:100%;">🗑️ حذف</button>
+                </div>`;
+            }).join('');
+        }
+
+        function periodLabel(p) {
+            return p === 'daily' ? 'يومي' : p === 'weekly' ? 'أسبوعي' : 'شهري';
+        }
+
+        function shiftLabel(s) {
+            return s === 'morning' ? '☀️ صباح' : s === 'evening' ? '🌙 مساء' : s === 'night' ? '🌃 ليل' : '☀️🌙 يوم كامل';
+        }
+
+        function shiftClass(s) {
+            return s === 'morning' ? 'shift-morning' : s === 'evening' ? 'shift-evening' : s === 'night' ? 'shift-night' : 'shift-full';
+        }
+
+        function selectCar(carId) {
+            document.querySelectorAll('.car-card').forEach(el => el.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+
+        function deleteCar(id) {
+            if (!confirm('هل أنت متأكد من حذف هذه السيارة؟')) return;
+            cars = cars.filter(c => c.id !== id);
+            incomes = incomes.filter(i => i.carId !== id);
+            expenses = expenses.filter(e => e.carId !== id);
+            localStorage.setItem('taxi_cars', JSON.stringify(cars));
+            localStorage.setItem('taxi_incomes', JSON.stringify(incomes));
+            localStorage.setItem('taxi_expenses', JSON.stringify(expenses));
+            renderCars();
+            updateCarSelects();
+            renderIncome();
+            renderExpenses();
+            renderReports();
+            showToast('🗑️ تم حذف السيارة');
+        }
+
+        function updateCarSelects() {
+            const opts = cars.map(c => `<option value="${c.id}">${c.name} (${c.workMode === 'km' ? 'كم' : 'رسيطة'})</option>`).join('');
+            ['income-car', 'expense-car'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = '<option value="">اختر السيارة</option>' + opts;
+            });
+        }
+
+        // ==================== DRIVERS ====================
+        function showAddDriver() { document.getElementById('add-driver-form').style.display = 'block'; }
+        function hideAddDriver() { document.getElementById('add-driver-form').style.display = 'none'; }
+
+        function addDriver() {
+            const name = document.getElementById('driver-name').value.trim();
+            const phone = document.getElementById('driver-phone').value.trim();
+            const cin = document.getElementById('driver-cin').value.trim();
+            const license = document.getElementById('driver-license').value.trim();
+            const licenseExpiry = document.getElementById('driver-license-expiry').value;
+            const notes = document.getElementById('driver-notes').value.trim();
+            if (!name) { showToast('❌ يرجى إدخال اسم السائق'); return; }
+            const driver = { id: Date.now(), name, phone, cin, license, licenseExpiry, notes, createdAt: new Date().toISOString() };
+            drivers.push(driver);
+            localStorage.setItem('taxi_drivers', JSON.stringify(drivers));
+            renderDrivers();
+            renderCarDriversSelect();
+            hideAddDriver();
+            document.getElementById('driver-name').value = '';
+            document.getElementById('driver-phone').value = '';
+            document.getElementById('driver-cin').value = '';
+            document.getElementById('driver-license').value = '';
+            document.getElementById('driver-license-expiry').value = '';
+            document.getElementById('driver-notes').value = '';
+            showToast('✅ تم إضافة السائق بنجاح');
+        }
+
+        function renderDrivers() {
+            const container = document.getElementById('drivers-list');
+            if (drivers.length === 0) { container.innerHTML = '<div class="empty-msg">لا يوجد سائقين مسجلين</div>'; return; }
+            container.innerHTML = drivers.map(d => {
+                const daysLeft = d.licenseExpiry ? Math.ceil((new Date(d.licenseExpiry) - new Date()) / (1000*60*60*24)) : null;
+                let statusClass = 'valid';
+                let statusText = 'سارية';
+                if (daysLeft !== null && daysLeft <= 0) { statusClass = 'danger'; statusText = 'منتهية'; }
+                else if (daysLeft !== null && daysLeft <= 30) { statusClass = 'warning'; statusText = 'تنتهي قريباً'; }
+                const assignedCars = cars.filter(c => c.driverIds && c.driverIds.includes(d.id)).map(c => c.name).join('، ');
+                return `<div class="driver-card">
+                    <div class="driver-card-header">
+                        <span class="driver-card-name">👤 ${d.name}</span>
+                        <span class="doc-status ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="driver-card-phone">📱 ${d.phone || 'لا يوجد هاتف'}</div>
+                    <div class="driver-card-details">🆔 ${d.cin || '---'} | 📜 رخصة: ${d.license || '---'}</div>
+                    ${d.licenseExpiry ? `<div class="driver-card-details">📅 تنتهي: ${d.licenseExpiry} ${daysLeft !== null ? `<span class="doc-days ${daysLeft <= 0 ? 'danger' : daysLeft <= 30 ? 'warning' : 'safe'}">(${daysLeft} يوم)</span>` : ''}</div>` : ''}
+                    ${assignedCars ? `<div class="driver-card-badge">🚗 ${assignedCars}</div>` : ''}
+                    ${d.notes ? `<div class="driver-card-badge" style="background:#fef3c7;color:#b45309;margin-top:4px;">📝 ${d.notes}</div>` : ''}
+                    <button class="btn-del" onclick="deleteDriver(${d.id})" style="margin-top:10px;width:100%;">🗑️ حذف السائق</button>
+                </div>`;
+            }).join('');
+        }
+
+        function updateDriverSelect(carId) {
+            const el = document.getElementById('income-driver');
+            if (!el) return;
+            if (!carId) {
+                el.innerHTML = '<option value="">اختر السيارة أولاً</option>';
+                return;
+            }
+            const car = cars.find(c => c.id == carId);
+            if (!car || !car.driverIds || car.driverIds.length === 0) {
+                el.innerHTML = '<option value="">لا يوجد سائقين لهذه السيارة</option>' + drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+                return;
+            }
+            const carDrivers = drivers.filter(d => car.driverIds.includes(d.id));
+            el.innerHTML = '<option value="">اختر السائق</option>' + carDrivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+        }
+
+        function deleteDriver(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا السائق؟ سيتم إزالته من جميع السيارات.')) return;
+            drivers = drivers.filter(d => d.id !== id);
+            cars.forEach(c => {
+                if (c.driverIds) c.driverIds = c.driverIds.filter(did => did !== id);
+            });
+            localStorage.setItem('taxi_drivers', JSON.stringify(drivers));
+            localStorage.setItem('taxi_cars', JSON.stringify(cars));
+            renderDrivers();
+            renderCars();
+            renderCarDriversSelect();
+            showToast('🗑️ تم حذف السائق');
+        }
+
+        // ==================== INCOME ====================
+        function onIncomeCarChange() {
+            const carId = document.getElementById('income-car').value;
+            const car = cars.find(c => c.id == carId);
+            if (!car) return;
+
+            updateDriverSelect(carId);
+
+            if (car.workMode === 'km') {
+                document.getElementById('income-km-section').style.display = 'block';
+                document.getElementById('income-rwsita-section').style.display = 'none';
+                document.getElementById('last-km-display').textContent = car.lastKm || car.initialKm || 0;
+                document.getElementById('income-km-start').value = car.lastKm || car.initialKm || 0;
+            } else {
+                document.getElementById('income-km-section').style.display = 'none';
+                document.getElementById('income-rwsita-section').style.display = 'block';
+                document.getElementById('rwsita-amount-display').textContent = car.rwsitaAmount || 0;
+                document.getElementById('rwsita-period-display').textContent = periodLabel(car.rwsitaPeriod);
+                document.getElementById('income-rwsita-amount').value = car.rwsitaAmount || 0;
+            }
+        }
+
+        function calcKmIncome() {
+            const start = parseFloat(document.getElementById('income-km-start').value) || 0;
+            const end = parseFloat(document.getElementById('income-km-end').value) || 0;
+            const price = parseFloat(document.getElementById('income-km-price').value) || 0;
+            const diff = Math.max(0, end - start);
+            const amount = diff * price;
+            document.getElementById('km-diff-display').style.display = diff > 0 ? 'block' : 'none';
+            document.getElementById('km-diff').textContent = diff;
+            document.getElementById('km-price-display').style.display = amount > 0 ? 'block' : 'none';
+            documen
